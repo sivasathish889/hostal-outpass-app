@@ -1,17 +1,19 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
-import StudentLoginScreen from "../Screens/StudentScreens/LoginScreen";
-import RegsiterScreen from "../Screens/StudentScreens/RegisterScreen";
-import OTPScreen from "../Screens/StudentScreens/OTPScreen";
-import ResetPasswordScreen from "../Screens/StudentScreens/ResetPasswordScreen";
+import StudentLoginScreen from "../Screens/StudentScreens/Login/LoginScreen";
+import RegsiterScreen from "../Screens/StudentScreens/Register/RegisterScreen";
+import OTPScreen from "../Screens/StudentScreens/Login/OTPScreen";
+import ForgetPassLoginScreen from "../Screens/StudentScreens/Login/ForgetPassLoginScreen";
+import RegisterOTPScreen from "../Screens/StudentScreens/Register/RegisterOTPScreen";
+import ResetPasswordScreen from "../Screens/StudentScreens/Login/ResetPasswordScreen";
+import HomeScreen from "../Screens/StudentScreens/HomeScreen";
 import WelcomeScreen from "../Screens/WelcomeScreen";
 import InitialScreen from "../Screens/InitialScreen";
 import WardenLoginScreen from "../Screens/WardenScreens/LoginScreen";
-let Stack = createNativeStackNavigator();
 
 const StudentRoute = () => {
+  let Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator initialRouteName="/Initial">
+    <Stack.Navigator initialRouteName={"/Initial"}>
       <Stack.Screen
         name="/Welcome"
         component={WelcomeScreen}
@@ -22,16 +24,17 @@ const StudentRoute = () => {
         component={InitialScreen}
         options={{ headerShown: false }}
       />
-
       <Stack.Screen
-        name="/StudentLogin"
-        component={StudentLoginScreen}
+        name="/"
+        component={HomeScreen}
         options={{
-          title: "Login",
+          title: "Welcome",
           headerStyle: { backgroundColor: "rgb(11,117,131)" },
           headerTintColor: "white",
         }}
       />
+
+      {/* Student register screen */}
       <Stack.Screen
         name="/StudentRegister"
         component={RegsiterScreen}
@@ -42,9 +45,31 @@ const StudentRoute = () => {
         }}
       />
 
+      {/* student register after otp screen */}
       <Stack.Screen
-        name="/StudentForgetOTP"
-        component={OTPScreen}
+        name="/StudentRegsiterOTP"
+        component={RegisterOTPScreen}
+        options={{
+          title: "Verify OTP",
+          headerStyle: { backgroundColor: "rgb(11,117,131)" },
+          headerTintColor: "white",
+        }}
+      />
+
+      {/* student login screen */}
+      <Stack.Screen
+        name="/StudentLogin"
+        component={StudentLoginScreen}
+        options={{
+          title: "Login",
+          headerStyle: { backgroundColor: "rgb(11,117,131)" },
+          headerTintColor: "white",
+        }}
+      />
+
+      <Stack.Screen
+        name="/StudentLoginForget"
+        component={ForgetPassLoginScreen}
         options={{
           title: "Forget Password",
           headerStyle: { backgroundColor: "rgb(11,117,131)" },
@@ -52,6 +77,19 @@ const StudentRoute = () => {
         }}
       />
 
+      {/* student forget password otp */}
+      <Stack.Screen
+        name="/StudentForgetOTP"
+        component={OTPScreen}
+        options={{
+          title: "Forget OTP",
+          headerStyle: { backgroundColor: "rgb(11,117,131)" },
+          headerTintColor: "white",
+        }}
+      />
+
+
+      {/* student reset password screen */}
       <Stack.Screen
         name="/StudentResetPassword"
         component={ResetPasswordScreen}

@@ -1,3 +1,4 @@
+"use client"
 import {
   ImageBackground,
   StyleSheet,
@@ -6,23 +7,72 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import annaUniversity from "../../assets/annaUniversity.jpeg";
+import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
+import env from "../../../environment";
+import { useToast } from "react-native-toast-notifications";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
 
-const OTPScreen = () => {
-    let navigation = useNavigation();
+const OTPScreen = (props) => {
+  let navigation = useNavigation();
+  const toast = useToast();
   
+  const [otp, setOtp] = useState(null);
+
+  let Token = props.route.params.token;
+  
+  const handleSubmit = async () => {
+
+  try {
+    await fetch(`${env.CLIENT_URL}/student/register/verify`, {
+      method: "POST",
+      body: JSON.stringify({
+        otp,
+        Token
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+    .then((res)=>res.json())
+    .then((data)=>{
+      if(data.success){
+        toast.show(data.message, {
+          type: "success",
+          placement: "bottom",
+          duration: 4000,
+          offset: 30,
+          animationType: "slide-in",
+        });
+        navigation.navigate("/StudentLogin")
+
+      }
+      else {
+        toast.show(data.message, {
+          type: "danger",
+          placement: "bottom",
+          duration: 4000,
+          offset: 30,
+          animationType: "slide-in",
+        });
+      }
+    })
+    .catch((err)=>console.log(err))
+  } catch (error) {
+    console.log(error)
+  }
+  };
+
   return (
     <ImageBackground source={annaUniversity} style={styles.backgroundImage}>
       <SafeAreaView style={styles.container}>
         <View style={styles.form}>
           <Text style={styles.heading}>Student</Text>
-          <Text style={styles.subHead}>Forget Password</Text>
+          <Text style={styles.subHead}>Verify OTP</Text>
 
           <View style={styles.inputgroup}>
             <Text style={styles.lable}>OTP</Text>
@@ -31,11 +81,19 @@ const OTPScreen = () => {
               style={styles.input}
               placeholderTextColor={placeholderTextColor}
               keyboardType="number-pad"
+              onChangeText={(text) => setOtp(text)}
             />
           </View>
-          <View style={{ alignItems: "center", marginVertical : 10 }}>
-            <TouchableOpacity style={styles.buttonOutline}>
-              <Text style={styles.btn} onPress={()=>navigation.navigate('/StudentResetPassword')}>Verify OTP</Text>
+          <View style={{ alignItems: "center", marginVertical: 10 }}>
+            <TouchableOpacity
+              style={styles.buttonOutline}
+              onPress={()=>handleSubmit()}
+            >
+              <Text
+                style={styles.btn}
+              >
+                Verify OTP
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -69,7 +127,7 @@ const styles = StyleSheet.create({
   subHead: {
     textAlign: "center",
     fontSize: 20,
-    marginBottom : 30
+    marginBottom: 30,
   },
   input: {
     backgroundColor: "#D9D9D9",
@@ -77,12 +135,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: "rgb(115,115,115)",
-    width : "80%",
-    alignSelf : "center"
+    width: "80%",
+    alignSelf: "center",
   },
   lable: {
-    textAlign : "center",
-    marginBottom : 10
+    textAlign: "center",
+    marginBottom: 10,
   },
   buttonOutline: {
     backgroundColor: mainColor,

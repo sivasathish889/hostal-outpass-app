@@ -1,6 +1,6 @@
 import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import annaUniversity from "../../assets/annaUniversity.jpeg";
+import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 

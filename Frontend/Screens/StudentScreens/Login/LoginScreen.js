@@ -9,20 +9,62 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import annaUniversity from "../../assets/annaUniversity.jpeg";
+import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import env from "../../../environment";
+import { useToast } from "react-native-toast-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
 
 const LoginScreen = () => {
   let navigation = useNavigation();
+  let toast = useToast()
   const [showPassword, setShowPassword] = useState(false);
+  const [registerNumber, setRegisterNumber] = useState(null);
+  const [password, setPassword] = useState(null);
 
   const toggleShowPassword = () => {
-      setShowPassword(!showPassword);
+    setShowPassword(!showPassword);
+  };
+
+  const handleSubmit = () => {
+    let payload = {
+      registerNumber,
+      password,
+    };
+    fetch(`${env.CLIENT_URL}/student/login`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          toast.show(data.message, {
+            type: "success",
+            placement: "bottom",
+            duration: 4000,
+            offset: 30,
+            animationType: "slide-in",
+          });
+          AsyncStorage.setItem('user', JSON.stringify(payload))
+          navigation.navigate("/");
+        } else {
+          toast.show(data.message, {
+            type: "danger",
+            placement: "bottom",
+            duration: 4000,
+            offset: 30,
+            animationType: "slide-in",
+          });
+        }
+      })
+      .catch((error) => console.log(error));
   };
   return (
     <ImageBackground source={annaUniversity} style={styles.backgroundImage}>
@@ -37,6 +79,8 @@ const LoginScreen = () => {
               placeholder="Enter Your Regsiter Number"
               style={styles.input}
               placeholderTextColor={placeholderTextColor}
+              onChangeText={(text) => setRegisterNumber(text)}
+              keyboardType="number-pad"
             />
             <Text style={styles.lable}>Password :</Text>
             <TextInput
@@ -44,27 +88,40 @@ const LoginScreen = () => {
               style={styles.input}
               placeholderTextColor={placeholderTextColor}
               secureTextEntry={!showPassword}
-              />
+              onChangeText={(text) => setPassword(text)}
+            />
             <MaterialCommunityIcons
-                    name={showPassword ? 'eye' : 'eye-off'}
-                    size={18}
-                    color="black"
-                    style={styles.icon}
-                    onPress={toggleShowPassword}
-                />
-            <Text style={styles.forgetPass} onPress={()=>navigation.navigate("/StudentForgetOTP")}>Forget/Change Password</Text>
+              name={showPassword ? "eye" : "eye-off"}
+              size={18}
+              color="black"
+              style={styles.icon}
+              onPress={toggleShowPassword}
+            />
+            <Text
+              style={styles.forgetPass}
+              onPress={() => navigation.navigate("/StudentLoginForget")}
+            >
+              Forget/Change Password
+            </Text>
           </View>
           <Text style={{ marginTop: 10 }}>
             If you dont have account..
             <Text
               onPress={() => navigation.navigate("/StudentRegister")}
-              style={{ color: mainColor, textDecorationLine: "underline" ,fontSize:16}}
+              style={{
+                color: mainColor,
+                textDecorationLine: "underline",
+                fontSize: 16,
+              }}
             >
               Please Register
             </Text>
           </Text>
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity style={styles.buttonOutline}>
+            <TouchableOpacity
+              style={styles.buttonOutline}
+              onPress={handleSubmit}
+            >
               <Text style={styles.btn}>Login</Text>
             </TouchableOpacity>
           </View>
@@ -91,7 +148,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     width: "80%",
     backgroundColor: "rgb(171,171,171)",
-
   },
   heading: {
     textAlign: "center",
@@ -135,9 +191,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textDecorationLine: "underline",
   },
-  icon : {
-    position : "absolute",
-    bottom : 57,
-    right : 10
-  }
+  icon: {
+    position: "absolute",
+    bottom: 57,
+    right: 10,
+  },
 });
