@@ -28,7 +28,7 @@ const OTPScreen = (props) => {
   const handleSubmit = async () => {
 
   try {
-    await fetch(`${env.CLIENT_URL}/student/register/verify`, {
+    await fetch(`${env.CLIENT_URL}${env.studentRegisterVerify}`, {
       method: "POST",
       body: JSON.stringify({
         otp,

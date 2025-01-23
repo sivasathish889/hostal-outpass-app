@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
+import env from "../../../environment"
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -19,6 +20,7 @@ const OTPScreen = ({ route }) => {
   let [otp, setOtp] = useState(null);
   let toast = useToast()
   let backendOtp = route.params.otp;
+  let registerNumber = route.params.registerNumber;
   let navigation = useNavigation();
 
     let payload = {
@@ -26,7 +28,7 @@ const OTPScreen = ({ route }) => {
       otp
     }
   const handleSubmit = async () => {
-    await fetch(`${env.CLIENT_URL}/student/forgetPassword/verify`, {
+    await fetch(`${env.CLIENT_URL}${env.studentLoginVerify}`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {
@@ -43,7 +45,9 @@ const OTPScreen = ({ route }) => {
           offset: 30,
           animationType: "slide-in",
         });
-        navigation.navigate("/StudentResetPassword");
+        navigation.navigate("/StudentResetPassword",{
+          registerNumber : registerNumber
+      });
       } else {
         toast.show(data.message, {
           type: "danger",

@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
+import env from "../../../environment"
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -23,7 +24,7 @@ const ForgetPassLoginScreen = () => {
     registerNumber
   }
   const handleSubmit = () => {
-    fetch(`${env.CLIENT_URL}/student/forgetPassword`, {
+    fetch(`${env.CLIENT_URL}${env.studentLoginForgetPassword}`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {
@@ -41,7 +42,8 @@ const ForgetPassLoginScreen = () => {
           animationType: "slide-in",
         });
         navigation.navigate("/StudentForgetOTP",{
-          otp : data.Token
+          otp : data.Token,
+          registerNumber : registerNumber
         });
       } else {
         toast.show(data.message, {

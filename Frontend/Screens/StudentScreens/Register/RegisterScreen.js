@@ -50,7 +50,7 @@ const RegisterScreen = () => {
       password,
       confirmPassword,
     };
-    fetch(`${env.CLIENT_URL}/student/register`, {
+    fetch(`${env.CLIENT_URL}${env.studentRegister}`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {

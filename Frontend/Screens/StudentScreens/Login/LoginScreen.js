@@ -35,7 +35,7 @@ const LoginScreen = () => {
       registerNumber,
       password,
     };
-    fetch(`${env.CLIENT_URL}/student/login`, {
+    fetch(`${env.CLIENT_URL}${env.studentLogin}`, {
       method: "POST",
       body: JSON.stringify(payload),
       headers: {
