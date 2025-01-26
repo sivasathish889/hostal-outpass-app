@@ -52,7 +52,7 @@ const LoginScreen = () => {
             offset: 30,
             animationType: "slide-in",
           });
-          AsyncStorage.setItem('user', JSON.stringify(payload))
+          AsyncStorage.setItem('user', data.user)
           navigation.navigate("/");
         } else {
           toast.show(data.message, {

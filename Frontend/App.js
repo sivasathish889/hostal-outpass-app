@@ -1,6 +1,6 @@
 
 import {NavigationContainer} from '@react-navigation/native';
-import StudentRoute from "./Routes/routes"
+import StudentRoute from "./Routes/Studentroute"
 import { ToastProvider } from 'react-native-toast-notifications'
 
 const App = () => {
@@ -9,7 +9,6 @@ const App = () => {
     <NavigationContainer>
       <StudentRoute/>
     </NavigationContainer>
-
     </ToastProvider>
   )
 }

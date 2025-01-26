@@ -5,35 +5,15 @@ import OTPScreen from "../Screens/StudentScreens/Login/OTPScreen";
 import ForgetPassLoginScreen from "../Screens/StudentScreens/Login/ForgetPassLoginScreen";
 import RegisterOTPScreen from "../Screens/StudentScreens/Register/RegisterOTPScreen";
 import ResetPasswordScreen from "../Screens/StudentScreens/Login/ResetPasswordScreen";
-import HomeScreen from "../Screens/StudentScreens/HomeScreen";
 import WelcomeScreen from "../Screens/WelcomeScreen";
 import InitialScreen from "../Screens/InitialScreen";
 import WardenLoginScreen from "../Screens/WardenScreens/LoginScreen";
+import HomeRoute from "../Screens/StudentScreens/Home/TabRoute";
 
 const StudentRoute = () => {
   let Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator initialRouteName={"/Initial"}>
-      <Stack.Screen
-        name="/Welcome"
-        component={WelcomeScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="/Initial"
-        component={InitialScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="/"
-        component={HomeScreen}
-        options={{
-          title: "Welcome",
-          headerStyle: { backgroundColor: "rgb(11,117,131)" },
-          headerTintColor: "white",
-        }}
-      />
-
+    <Stack.Navigator initialRouteName={"/"}>
       {/* Student register screen */}
       <Stack.Screen
         name="/StudentRegister"
@@ -67,6 +47,7 @@ const StudentRoute = () => {
         }}
       />
 
+      {/* forget password */}
       <Stack.Screen
         name="/StudentLoginForget"
         component={ForgetPassLoginScreen}
@@ -88,8 +69,7 @@ const StudentRoute = () => {
         }}
       />
 
-
-      {/* student reset password screen */}
+      {/* student change password screen */}
       <Stack.Screen
         name="/StudentResetPassword"
         component={ResetPasswordScreen}
@@ -99,6 +79,35 @@ const StudentRoute = () => {
           headerTintColor: "white",
         }}
       />
+
+      <Stack.Screen
+        name="/Welcome"
+        component={WelcomeScreen}
+        options={{ headerShown: false }}
+        
+      />
+
+      <Stack.Screen
+        name="/Initial"
+        component={InitialScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="/"
+        component={HomeRoute}
+        options={({ route }) => ({
+          title: `Welcome`,
+          headerStyle: { backgroundColor: "rgb(11,117,131)" },
+          headerTintColor: "white",
+          headerShown : false
+        })}
+      />
+      
+
+
+
+
+
 
       <Stack.Screen
         name="/WardenLogin"
