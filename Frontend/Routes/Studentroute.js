@@ -13,7 +13,7 @@ import HomeRoute from "../Screens/StudentScreens/Home/TabRoute";
 const StudentRoute = () => {
   let Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator initialRouteName={"/"}>
+    <Stack.Navigator initialRouteName={"/Initial"}>
       {/* Student register screen */}
       <Stack.Screen
         name="/StudentRegister"
