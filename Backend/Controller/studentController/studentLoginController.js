@@ -1,5 +1,5 @@
-const studentModel = require("../../Model/Schema/studentSchema");
 const { comparePassword } = require("../../middleware/bcrypt");
+const studentModel = require("../../Model/Schema/studentModel");
 
 const studentLoginController = async (req, res) => {
   try {

@@ -39,6 +39,6 @@ const studentSchema = new mongoose.Schema({
         required : true
     }
 
-})
+},{timestamps : true})
 
-module.exports = mongoose.model('StudentRegister',studentSchema)
+module.exports = mongoose.model('Students',studentSchema)

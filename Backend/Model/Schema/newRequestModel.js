@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 
-
 const newReqestSchema = new mongoose.Schema({
     RegisterNumber : {
         type : Number,
@@ -39,7 +38,7 @@ const newReqestSchema = new mongoose.Schema({
         required : true
     },
     OutDateTime : {
-        type : Date,
+        type : String,
         required : true
     },
     InDateTime :{
@@ -57,6 +56,6 @@ const newReqestSchema = new mongoose.Schema({
         required : true
     }
 
-})
+},{timestamps : true,})
 
 module.exports = mongoose.model('Request', newReqestSchema)

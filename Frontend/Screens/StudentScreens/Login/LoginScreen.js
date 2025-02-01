@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import env from "../../../environment";
+import env from "../../../constants/urls";
 import { useToast } from "react-native-toast-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -21,16 +21,26 @@ let placeholderTextColor = "#AFAFAF";
 
 const LoginScreen = () => {
   let navigation = useNavigation();
-  let toast = useToast()
+  let toast = useToast();
+
   const [showPassword, setShowPassword] = useState(false);
   const [registerNumber, setRegisterNumber] = useState(null);
   const [password, setPassword] = useState(null);
+
+  const [registerNumberError, setRegisterNumberError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   const handleSubmit = () => {
+    if (registerNumber === null || registerNumber.length == 0) {
+      return setRegisterNumberError("Please Enter Register Number");
+      
+    } else if (password === null || password.length == 0) {
+      return setPasswordError("Please Enter Password");
+    }
     let payload = {
       registerNumber,
       password,
@@ -52,7 +62,7 @@ const LoginScreen = () => {
             offset: 30,
             animationType: "slide-in",
           });
-          AsyncStorage.setItem('user', data.user)
+          AsyncStorage.setItem("user", data.user);
           navigation.navigate("/");
         } else {
           toast.show(data.message, {
@@ -79,17 +89,33 @@ const LoginScreen = () => {
               placeholder="Enter Your Regsiter Number"
               style={styles.input}
               placeholderTextColor={placeholderTextColor}
-              onChangeText={(text) => setRegisterNumber(text)}
+              onChangeText={(text) => {
+                setRegisterNumber(text);
+                setRegisterNumberError(null);
+              }}
               keyboardType="number-pad"
-            />
+              value={registerNumber}
+              inputMode="numeric"
+              />
+            {registerNumberError != null ? (
+              <Text style={{color:"red"}}>{registerNumberError}</Text>
+            ) : (
+              ""
+            )}
             <Text style={styles.lable}>Password :</Text>
             <TextInput
               placeholder="Enter Your Password"
               style={styles.input}
               placeholderTextColor={placeholderTextColor}
               secureTextEntry={!showPassword}
-              onChangeText={(text) => setPassword(text)}
-            />
+              onChangeText={(text) => {
+                setPassword(text);
+                setPasswordError(null);
+              }}
+              value={password}
+              inputMode="text"
+              />
+            {passwordError != null ? <Text style={{color:"red"}}>{passwordError}</Text> : ""}
             <MaterialCommunityIcons
               name={showPassword ? "eye" : "eye-off"}
               size={18}

@@ -11,7 +11,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
-import env from "../../../environment";
+import env from "../../../constants/urls";
 import { useToast } from "react-native-toast-notifications";
 
 let mainColor = "rgb(11,117,131)";
@@ -82,7 +82,8 @@ const OTPScreen = (props) => {
               placeholderTextColor={placeholderTextColor}
               keyboardType="number-pad"
               onChangeText={(text) => setOtp(text)}
-            />
+              inputMode="numeric"
+              />
           </View>
           <View style={{ alignItems: "center", marginVertical: 10 }}>
             <TouchableOpacity

@@ -10,16 +10,14 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
-import env from "../../../environment";
+import env from "../../../constants/urls";
 import { Dropdown } from "react-native-element-dropdown";
 import { useToast } from "react-native-toast-notifications";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
 
 const RegisterScreen = () => {
-
   const [isFocus, setIsFocus] = useState(false);
 
   let [name, setName] = useState(null);
@@ -33,11 +31,44 @@ const RegisterScreen = () => {
   let [password, setPassword] = useState(null);
   let [confirmPassword, setConfirmPassword] = useState(null);
 
-  const toast = useToast();
+  let [nameError, setNameError] = useState(null);
+  let [registerNumberError, setRegisterNumberError] = useState(null);
+  let [departmentError, setDepartmentError] = useState(null);
+  let [yearError, setYearError] = useState(null);
+  let [phoneNumberError, setPhoneNumberError] = useState(null);
+  let [parentNumberError, setParentNumberError] = useState(null);
+  let [eMailError, setEMailError] = useState(null);
+  let [districtError, setDistrictError] = useState(null);
+  let [passwordError, setPasswordError] = useState(null);
+  let [confirmPasswordError, setConfirmPasswordError] = useState(null);
 
+  const toast = useToast();
   let navigation = useNavigation();
 
   const handleSubmit = async () => {
+    // Form Validationn
+    if (name === null || name.length == 0) {
+      return setNameError("Please Enter Your name");
+    } else if (registerNumber === null || registerNumber.length == 0) {
+      return setRegisterNumberError("Please Enter RegisterNumber");
+    } else if (department === null || department.length == 0) {
+      return setDepartmentError("Please Enter Your Department");
+    }else if (year === null || year.length == 0) {
+      return setYearError("Please Enter Your Year");
+    } else if (phoneNumber === null || phoneNumber.length == 0) {
+      return setPhoneNumberError("Please Enter Your Phone Number");
+    } else if (parentNumber === null || parentNumber.length == 0) {
+      return setParentNumberError("Please Enter Your Parent Number");
+    } else if (eMail === null || eMail.length == 0) {
+      return setEMailError("Please Enter Your e-mail");
+    } else if (district === null || district.length == 0) {
+      return setDistrictError("Please Enter Your District");
+    } else if (password === null || password.length == 0) {
+      return setPasswordError("Please Enter Your Password");
+    } else if (confirmPassword === null || confirmPassword.length == 0) {
+      return setConfirmPasswordError("Please Enter Confirm Password");
+    }
+
     let payload = {
       name,
       registerNumber,
@@ -58,8 +89,8 @@ const RegisterScreen = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) =>{
-        if(data.success){
+      .then((data) => {
+        if (data.success) {
           toast.show(data.message, {
             type: "success",
             placement: "bottom",
@@ -68,11 +99,9 @@ const RegisterScreen = () => {
             animationType: "slide-in",
           });
           navigation.navigate("/StudentRegsiterOTP", {
-            token : data.Token
-          })
-
-        }
-        else {
+            token: data.Token,
+          });
+        } else {
           toast.show(data.message, {
             type: "danger",
             placement: "bottom",
@@ -92,43 +121,72 @@ const RegisterScreen = () => {
           <Text style={styles.mainHead}>Student</Text>
           <Text style={styles.subHead}>Register</Text>
 
-          <View style={styles.inputRows}>
-            <View style={styles.inputGroups}>
-              <Text style={styles.label}>Name :</Text>
-              <TextInput
-                placeholder="Enter Your Name"
-                style={styles.input}
-                placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setName(text)}
+          <View style={styles.inputGroups}>
+            <Text style={styles.label}>Name :</Text>
+            <TextInput
+              placeholder="Enter Your Name"
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(text) => {
+                setName(text);
+                setNameError(null);
+              }}
+              value={name}
+              inputMode="text"
               />
-            </View>
-
-            <View style={styles.inputGroups}>
-              <Text style={styles.label}>Register Number :</Text>
-              <TextInput
-                placeholder="Enter Your Regsiter Number"
-                style={styles.input}
-                placeholderTextColor={placeholderTextColor}
-                keyboardType="numeric"
-                onChangeText={(text) => setRegisterNumber(text)}
-              />
-            </View>
+            {nameError != null ? (
+              <Text style={styles.errorText}>{nameError}</Text>
+            ) : (
+              ""
+            )}
           </View>
+
+          <View style={styles.inputGroups}>
+            <Text style={styles.label}>Register Number :</Text>
+            <TextInput
+              placeholder="Enter Your Regsiter Number"
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              keyboardType="number-pad"
+              onChangeText={(text) => {
+                setRegisterNumber(text);
+                setRegisterNumberError(null);
+              }}
+              value={registerNumber}
+              inputMode="numeric"
+              />
+            {registerNumberError != null ? (
+              <Text style={styles.errorText}>{registerNumberError}</Text>
+            ) : (
+              ""
+            )}
+          </View>
+
           <View style={styles.inputRows}>
-            <View style={styles.inputGroups}>
+            <View style={styles.inputGrid}>
               <Text style={styles.label}>Department :</Text>
               <TextInput
                 placeholder="Enter Your Department"
                 style={styles.input}
                 placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setDepartment(text)}
-              />
+                onChangeText={(text) => {
+                  setDepartment(text);
+                  setDepartmentError(null);
+                }}
+                value={department}
+                inputMode="text"
+                />
+               {departmentError != null ? (
+              <Text style={styles.errorText}>{departmentError}</Text>
+            ) : (
+              ""
+            )}
             </View>
 
-            <View style={styles.inputGroups}>
+            <View style={styles.inputGrid}>
               <Text style={styles.label}>Year :</Text>
               <Dropdown
-                style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                style={[styles.dropdown]}
                 data={[
                   { label: "I ", value: "1" },
                   { label: "II ", value: "2" },
@@ -145,80 +203,129 @@ const RegisterScreen = () => {
                 onChange={(item) => {
                   setYear(item.value);
                   setIsFocus(false);
+                  setYearError(null);
                 }}
+                placeholderStyle={{
+                  color: placeholderTextColor,
+                  paddingStart: 10,
+                }}
+                itemContainerStyle={{ borderRadius: 10 }}
               />
+              {yearError != null ? (
+                <Text style={styles.errorText}>{yearError}</Text>
+              ) : (
+                ""
+              )}
             </View>
           </View>
 
-          <View style={styles.inputRows}>
-            <View style={styles.inputGroups}>
-              <Text style={styles.label}>Phone Number :</Text>
-              <TextInput
-                placeholder="Enter Your Phone Number"
-                style={styles.input}
-                placeholderTextColor={placeholderTextColor}
-                keyboardType="numeric"
-                onChangeText={(text) => setPhoneNumber(text)}
+          <View style={styles.inputGroups}>
+            <Text style={styles.label}>Phone Number :</Text>
+            <TextInput
+              placeholder="Enter Your Phone Number"
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              keyboardType="number-pad"
+              onChangeText={(text) => {setPhoneNumber(text);setPhoneNumberError(null)}}
+              value={phoneNumber}
+              inputMode="numeric"
               />
-            </View>
-
-            <View style={styles.inputGroups}>
-              <Text style={styles.label}>Parent Number :</Text>
-              <TextInput
-                placeholder="Enter Your Parent Number "
-                style={styles.input}
-                keyboardType="numeric"
-                placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setParentNumber(text)}
-              />
-            </View>
+            {phoneNumberError != null ? (
+                <Text style={styles.errorText}>{phoneNumberError}</Text>
+              ) : (
+                ""
+              )}
           </View>
 
-          <View style={styles.inputRows}>
-            <View style={styles.inputGroups}>
-              <Text style={styles.label}>E-mail :</Text>
-              <TextInput
-                placeholder="Enter Your E-mail"
-                style={styles.input}
-                placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setEMail(text)}
+          <View style={styles.inputGroups}>
+            <Text style={styles.label}>Parent Number :</Text>
+            <TextInput
+              placeholder="Enter Your Parent Number "
+              style={styles.input}
+              keyboardType="number-pad"
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(text) => {setParentNumber(text);setParentNumberError(null)}}
+              value={parentNumber}
+              inputMode="numeric"
               />
-            </View>
-
-            <View style={styles.inputGroups}>
-              <Text style={styles.label}>District :</Text>
-              <TextInput
-                placeholder="Enter Your District "
-                style={styles.input}
-                placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setDistrict(text)}
+            {parentNumberError != null ? (
+                <Text style={styles.errorText}>{parentNumberError}</Text>
+              ) : (
+                ""
+              )}
+          </View>
+          <View style={styles.inputGroups}>
+            <Text style={styles.label}>E-mail :</Text>
+            <TextInput
+              placeholder="Enter Your E-mail"
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(text) => {setEMail(text);setEMailError(null)}}
+              value={eMail}
+              keyboardType="email-address"
+              inputMode="email"
               />
-            </View>
+            {eMailError != null ? (
+                <Text style={styles.errorText}>{eMailError}</Text>
+              ) : (
+                ""
+              )}
           </View>
 
+          <View style={styles.inputGroups}>
+            <Text style={styles.label}>District :</Text>
+            <TextInput
+              placeholder="Enter Your District "
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(text) => {setDistrict(text);setDistrictError(null)}}
+              value={district}
+              inputMode="text"
+              />
+            {districtError != null ? (
+                <Text style={styles.errorText}>{districtError}</Text>
+              ) : (
+                ""
+              )}
+          </View>
           <View style={styles.inputRows}>
-            <View style={styles.inputGroups}>
+            <View style={styles.inputGrid}>
               <Text style={styles.label}>Password :</Text>
               <TextInput
                 placeholder="Enter Your Password"
                 style={styles.input}
                 placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={(text) => {setPassword(text);setPasswordError(null)}}
                 secureTextEntry
-              />
+                value={password}
+                inputMode="text"
+                />
+              {passwordError != null ? (
+                <Text style={styles.errorText}>{passwordError}</Text>
+              ) : (
+                ""
+              )}
             </View>
 
-            <View style={styles.inputGroups}>
+            <View style={styles.inputGrid}>
               <Text style={styles.label}>Confirm Password :</Text>
               <TextInput
                 placeholder="Enter Confirm Password"
-                style={styles.input}
+                style={[styles.input]}
                 placeholderTextColor={placeholderTextColor}
-                onChangeText={(text) => setConfirmPassword(text)}
+                onChangeText={(text) => {setConfirmPassword(text);setConfirmPasswordError(null)}}
+                value={confirmPassword}
                 secureTextEntry
-              />
+                inputMode="text"
+                />
+              {confirmPasswordError != null ? (
+                <Text style={styles.errorText}>{confirmPasswordError}</Text>
+              ) : (
+                ""
+              )}
             </View>
           </View>
+
           <Text style={{ marginStart: 15 }}>
             If You Already Regsiter...
             <Text
@@ -266,33 +373,36 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 35,
     color: mainColor,
-    marginTop: 15,
     fontWeight: "700",
   },
   subHead: {
     textAlign: "center",
     fontSize: 25,
-    marginBottom: 15,
+    marginBottom: 20,
+    textDecorationLine: "underline",
   },
   inputRows: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
   },
   inputGroups: {
+    marginBottom: 15,
+    paddingHorizontal: 10,
+  },
+  inputGrid: {
     width: "50%",
-    marginBottom: 20,
-    paddingHorizontal: 14,
+    marginBottom: 15,
+    paddingHorizontal: 10,
   },
   input: {
     backgroundColor: "#D9D9D9",
-    paddingStart: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: "rgb(115,115,115)",
     width: "100%",
     color: "black",
-    fontSize: 12,
+    fontSize: 14,
+    paddingStart: 15,
   },
   label: {
     fontSize: 16,
@@ -311,13 +421,20 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     backgroundColor: "#D9D9D9",
-    paddingStart: 10,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: "rgb(115,115,115)",
     width: "100%",
     color: "black",
     fontSize: 10,
-    height: 38,
+    height: 42,
+    borderRadius: 10,
+    paddingStart: 20,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginStart: 10,
+    marginTop: 5,
   },
 });

@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useToast } from "react-native-toast-notifications";
 import { useNavigation } from "@react-navigation/native";
-import env from "../../../environment"
+import env from "../../../constants/urls";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -71,7 +71,8 @@ const ForgetPassLoginScreen = () => {
               placeholderTextColor={placeholderTextColor}
               keyboardType="number-pad"
               onChangeText={(text)=>setRegisterNumber(text)}
-            />
+              inputMode="numeric"
+              />
           </View>
           <View style={{ alignItems: "center", marginVertical: 10 }}>
             <TouchableOpacity

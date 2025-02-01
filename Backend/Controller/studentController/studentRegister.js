@@ -3,7 +3,7 @@ const {
   generateJwtToken,
   verifyJwtToken,
 } = require("../../middleware/jsonWebToken");
-const studentModel = require("../../Model/Schema/studentSchema");
+const studentModel = require("../../Model/Schema/studentModel");
 const mailSender = require("../../middleware/mailSender");
 
 const studentRegisterController = async (req, res) => {

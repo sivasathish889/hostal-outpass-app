@@ -13,8 +13,6 @@ const adminPanel = require("./Routes/adminPanel")
 // envoronment variable
 env.config()
 
-const student = require("./Model/Schema/studentSchema")
-student()
 const PORT = process.env.PORT
 
 // middleware

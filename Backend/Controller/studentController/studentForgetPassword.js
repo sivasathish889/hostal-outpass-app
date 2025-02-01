@@ -2,7 +2,7 @@ const {
   generateJwtToken,
   verifyJwtToken,
 } = require("../../middleware/jsonWebToken");
-const studentSchema = require("../../Model/Schema/studentSchema");
+const studentModel = require("../../Model/Schema/studentModel");
 const mailSender = require("../../middleware/mailSender");
 const {
   comparePassword,
@@ -12,7 +12,7 @@ const {
 const studentForgetPassword = async (req, res) => {
   const { registerNumber } = req.body;
   if (registerNumber != null) {
-    await studentSchema
+    await studentModel
       .find({ RegisterNumber: registerNumber })
       .then(async (user) => {
         if (user.length > 0) {
@@ -68,7 +68,7 @@ const studentChangePassword = (req, res) => {
       String(confirmNewPassword).length != 0
     ) {
       if (String(newPassword) === String(confirmNewPassword)) {
-        studentSchema
+        studentModel
           .find({ RegisterNumber: registerNumber })
           .then(async (user) => {
             if (user.length > 0) {
@@ -82,7 +82,7 @@ const studentChangePassword = (req, res) => {
                 });
               } else {
                 const hashPassword = await generateHashPassword(newPassword);
-                await studentSchema.findOneAndUpdate(
+                await studentModel.findOneAndUpdate(
                   { RegisterNumber: registerNumber },
                   { $set: { Password: hashPassword } },
                   { new: true }

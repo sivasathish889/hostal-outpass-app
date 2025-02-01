@@ -6,25 +6,32 @@ import {
   Image,
   TouchableOpacity,
   Modal,
-  TextInput,
   StatusBar,
+  TextInput,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import plusIcon from "../../../assets/Plus.png";
-import XIcon from "../../../assets/XIcon.png";
-import calendarIcon from "../../../assets/Calendar.png";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import env from "../../../constants/urls";
+import NewPassModel from "./ModelScreen/NewPassModel";
 import { useNavigation } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
+import XIcon from "../../../assets/XIcon.png";
+import calendarIcon from "../../../assets/Calendar.png";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import env from "../../../environment";
 
 let mainColor = "rgb(11,117,131)";
 let secondaryColor = "#F5BC00";
 
 const HomeScreen = () => {
-  const [modelVisible, setModelVisible] = useState(false);
+  const [passModelVisible, setPassModelVisible] = useState(false);
+  const [editModelVisible, setEditModelVisible] = useState(false);
+  const [dataRefresh, setDataRefresh] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [fetchPassData, setFetchPassData] = useState({});
+
   const [isInDatePickerVisible, setInDatePickerVisible] = useState(false);
   const [isOutDatePickerVisible, setOutDatePickerVisible] = useState(false);
   const [roomNo, setRoomNo] = useState(null);
@@ -32,9 +39,11 @@ const HomeScreen = () => {
   const [purpose, setPurpose] = useState(null);
   const [inDateTime, setinDateTime] = useState(null);
   const [outDateTime, setoutDateTime] = useState(null);
+  const [passId, setPassId] = useState(null);
 
   let navigation = useNavigation();
   let toast = useToast();
+  let now = new Date();
 
   const handleInDateTimePicker = (e) => {
     setinDateTime(e.toLocaleString());
@@ -46,18 +55,48 @@ const HomeScreen = () => {
     setOutDatePickerVisible(false);
   };
 
-  AsyncStorage.getItem("user").then((user) => setUserId(user));
-  const handlePassSubmit = async () => {
+  const DeleteAlerting = (deletePassId) => {
+    Alert.alert("Delete Outpass", "Are you deleting your Outpass", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Sure",
+        onPress: () => handlePassDelete(deletePassId),
+        style: "default",
+      },
+    ]);
+  };
+  useEffect(() => {
+    fetchData();
+  }, [dataRefresh]);
+
+  const fetchData = async () => {
+    await AsyncStorage.getItem("user").then((userId) => {
+      setUserId(userId);
+      fetch(`${env.CLIENT_URL}${env.studentPendingPasses}/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setFetchPassData(data));
+    });
+  };
+
+  const handelPassUpdate = async () => {
     const payload = {
       roomNo,
       destination,
       purpose,
       inDateTime,
       outDateTime,
-      userId,
+      passId,
     };
-    await fetch(`${env.CLIENT_URL}${env.studentNewRequest}`, {
-      method: "POST",
+    await fetch(`${env.CLIENT_URL}${env.studentEditingPass}`, {
+      method: "PUT",
       body: JSON.stringify(payload),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
@@ -65,7 +104,6 @@ const HomeScreen = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           toast.show(data.message, {
             type: "success",
@@ -74,7 +112,9 @@ const HomeScreen = () => {
             offset: 30,
             animationType: "slide-in",
           });
-          // navigation.navigate("/");
+          navigation.navigate("/");
+          setEditModelVisible(false);
+          setDataRefresh(!dataRefresh);
         } else {
           toast.show(data.message, {
             type: "danger",
@@ -87,89 +127,146 @@ const HomeScreen = () => {
       })
       .catch((error) => console.log(error));
   };
-  const DATA = [
-    {
-      id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-      title: "Go To shopping",
-      no: 1,
-      Intine: "22/10/2032",
-      outDateTime: "23/10/2034",
-      place: "Tirunelveli",
-      created_at: "Today",
-    },
-    {
-      id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-      title: "Go to Home",
-      no: 2,
-      Intine: "22/10/2032",
-      outDateTime: "23/10/2034",
-      place: "Tirunelveli",
-      created_at: "Yester Day",
-    },
-    {
-      id: "58694a0f-3da1-471f-bd96-145571e29d72",
-      title: "Come From Ten",
-      no: 3,
-      Intine: "22/10/2032",
-      outDateTime: "23/10/2034",
-      place: "Tirunelveli",
-      created_at: "Today",
-    },
-  ];
+  const handlePassDelete = async (deletePassId) => {
+    await fetch(`${env.CLIENT_URL}${env.studentDeletePass}/${deletePassId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          toast.show(data.message, {
+            type: "success",
+            placement: "bottom",
+            duration: 4000,
+            offset: 30,
+            animationType: "slide-in",
+          });
+          navigation.navigate("/");
+          setEditModelVisible(false);
+          setDataRefresh(!dataRefresh);
+        } else {
+          toast.show(data.message, {
+            type: "danger",
+            placement: "bottom",
+            duration: 4000,
+            offset: 30,
+            animationType: "slide-in",
+          });
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <FlatList
-        data={DATA}
+        data={fetchPassData.pass}
         renderItem={({ item }) => {
           return (
             <View style={styles.container}>
-              <View>
-                <View style={styles.titleContainer}>
-                  <Text style={styles.rollNoStyle}>{item.no}.</Text>
-                  <Text style={styles.titleStyle}>{item.title}</Text>
-                </View>
-                <View style={styles.times}>
-                  <Text style={styles.inDateTimeStyle}>{item.Intine}</Text>
-                  <Text>{item.outDateTime}</Text>
-                </View>
+              <View style={styles.titleContainer}>
+                <Text style={styles.roomNoStyle}>
+                  {item.RoomNo.toUpperCase()}.
+                </Text>
               </View>
 
-              <Text style={styles.placeStyle}>{item.place}</Text>
-              <Text style={styles.createdStyle}>{item.created_at} </Text>
+              <View style={{ display: "flex", paddingVertical: 10 }}>
+                <Text style={styles.titleStyle}>{item.Purpose}</Text>
+                <View style={styles.times}>
+                  <Text style={styles.outDateTimeStyle}>
+                    {item.OutDateTime}
+                  </Text>
+                  <Text style={{ marginEnd: 10 }}>-</Text>
+                  <Text style={styles.inDateTimeStyle}>{item.InDateTime}</Text>
+                </View>
+              </View>
+              <Text style={styles.placeStyle}>{item.Distination}</Text>
+              <View style={styles.btnGroup}>
+                <TouchableOpacity
+                  style={styles.editBtnOutline}
+                  onPress={() => {
+                    setEditModelVisible(!editModelVisible);
+                    setinDateTime(item.InDateTime);
+                    setoutDateTime(item.OutDateTime);
+                    setRoomNo(item.RoomNo);
+                    setPurpose(item.Purpose);
+                    setDestination(item.Distination);
+                    setPassId(item._id);
+                  }}
+                >
+                  <Text style={styles.editBtn}>Edit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.deleteBtnOutline}
+                  onPress={() => DeleteAlerting(item._id)}
+                >
+                  <Text style={styles.deleteBtn}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.createdStyle}>
+                {new Date(item.createdAt).getDate() == String(now.getDate())
+                  ? "Today"
+                  : new Date(item.createdAt).getDate() + 1 ==
+                    String(now.getDate())
+                  ? "YesterDay"
+                  : new Date(item.createdAt)
+                      .toLocaleString(undefined, "Asia/Kolkata")
+                      .split(",")[0]}
+              </Text>
             </View>
           );
         }}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
       />
+
       <TouchableOpacity
         style={styles.plusIconStyle}
-        onPress={() => setModelVisible(!modelVisible)}
+        onPress={() => setPassModelVisible(!passModelVisible)}
       >
         <Image source={plusIcon} />
       </TouchableOpacity>
 
+      {/* New Pass Model */}
+      <NewPassModel
+        setDataRefresh={setDataRefresh}
+        userId={userId}
+        passModelVisible={passModelVisible}
+        setPassModelVisible={setPassModelVisible}
+        dataRefresh={dataRefresh}
+      />
+
+      {/* Edit Pass Model */}
       <View style={styles.modelContainer}>
-        <Modal animationType="slide" transparent={true} visible={modelVisible}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={editModelVisible}
+        >
           <View style={styles.modelContainer}>
             <StatusBar backgroundColor={"rgba(0,0,0,0.5)"} />
             <View style={styles.ModelContent}>
               <TouchableOpacity
-                onPress={() => setModelVisible(!modelVisible)}
+                onPress={() => setEditModelVisible(!editModelVisible)}
                 style={styles.closeBtn}
               >
                 <Image source={XIcon} />
               </TouchableOpacity>
 
-              <Text style={styles.modelHeading}>New Out Pass</Text>
+              <Text style={styles.modelHeading}>Edit OutPass</Text>
 
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Room No :</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter Your Room No"
+                  placeholder={roomNo}
                   placeholderTextColor={"#AFAFAF"}
-                  onChangeText={(text) => setRoomNo(text)}
-                  value={roomNo}
+                  onChangeText={(text) => {
+                    setRoomNo(text);
+                  }}
+                  inputMode=""
                 />
               </View>
 
@@ -177,42 +274,26 @@ const HomeScreen = () => {
                 <Text style={styles.inputLabel}>Destination :</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter Destination"
+                  placeholder={destination}
                   placeholderTextColor={"#AFAFAF"}
-                  onChangeText={(text) => setDestination(text)}
+                  onChangeText={(text) => {
+                    setDestination(text);
+                  }}
+                  inputMode="text"
                 />
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Purpoes :</Text>
+                <Text style={styles.inputLabel}>Purpose :</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Enter Purpose"
+                  placeholder={purpose}
                   placeholderTextColor={"#AFAFAF"}
-                  onChangeText={(text) => setPurpose(text)}
+                  onChangeText={(text) => {
+                    setPurpose(text);
+                  }}
+                  inputMode="text"
                 />
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>In Date & Time :</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder=" In Time and Date"
-                  placeholderTextColor={"#AFAFAF"}
-                  defaultValue={inDateTime}
-                  editable={false}
-                />
-                <DateTimePicker
-                  onCancel={() => setInDatePickerVisible(false)}
-                  onConfirm={(e) => handleInDateTimePicker(e)}
-                  isVisible={isInDatePickerVisible}
-                />
-                <TouchableOpacity
-                  style={styles.calendarIconStyle}
-                  onPress={() => setInDatePickerVisible(!isInDatePickerVisible)}
-                >
-                  <Image source={calendarIcon} />
-                </TouchableOpacity>
               </View>
 
               <View style={styles.inputGroup}>
@@ -220,13 +301,16 @@ const HomeScreen = () => {
                 <TextInput
                   style={styles.input}
                   placeholderTextColor={"#AFAFAF"}
-                  placeholder=" Out Time &  Date"
-                  defaultValue={outDateTime}
+                  placeholder={outDateTime}
                   editable={false}
+                  inputMode="text"
                 />
+
                 <DateTimePicker
                   onCancel={() => setOutDatePickerVisible(false)}
-                  onConfirm={(e) => handleOutDateTimePicker(e)}
+                  onConfirm={(e) => {
+                    handleOutDateTimePicker(e);
+                  }}
                   isVisible={isOutDatePickerVisible}
                 />
                 <TouchableOpacity
@@ -238,12 +322,36 @@ const HomeScreen = () => {
                   <Image source={calendarIcon} />
                 </TouchableOpacity>
               </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>In Date & Time :</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder={inDateTime}
+                  placeholderTextColor={"#AFAFAF"}
+                />
+
+                <DateTimePicker
+                  onCancel={() => setInDatePickerVisible(false)}
+                  onConfirm={(e) => {
+                    handleInDateTimePicker(e);
+                  }}
+                  isVisible={isInDatePickerVisible}
+                />
+                <TouchableOpacity
+                  style={styles.calendarIconStyle}
+                  onPress={() => setInDatePickerVisible(!isInDatePickerVisible)}
+                >
+                  <Image source={calendarIcon} />
+                </TouchableOpacity>
+              </View>
+
               <View style={{ alignItems: "center" }}>
                 <TouchableOpacity
                   style={styles.buttonOutline}
-                  onPress={() => handlePassSubmit()}
+                  onPress={handelPassUpdate}
                 >
-                  <Text style={styles.btn}>Send</Text>
+                  <Text style={styles.btn}>Update</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -260,38 +368,46 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: secondaryColor,
     margin: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
     boxShadow: "2 2 5 1",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
   },
-  times: {
-    display: "flex",
-    flexDirection: "row",
-    columnGap: 10,
-    marginTop: 5,
-    marginStart: 20,
-  },
-  inDateTimeStyle: {
-    width: 100,
-  },
-  placeStyle: {
-    marginStart: 30,
-  },
   titleContainer: {
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
+  },
+  roomNoStyle: {
+    fontSize: 16,
+    backgroundColor: "#D9D9D9",
+    width: 60,
+    height: 78,
+    alignSelf: "center",
+    textAlign: "center",
+    paddingTop: 25,
   },
   titleStyle: {
     marginStart: 10,
     fontSize: 20,
     marginTop: -5,
   },
-  rollNoStyle: {
-    fontSize: 16,
+  times: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: 5,
+    marginStart: 10,
+  },
+  inDateTimeStyle: {
+    width: 80,
+    marginStart: 5,
+  },
+  outDateTimeStyle: {
+    width: 80,
+  },
+  placeStyle: {
+    paddingHorizontal: 20,
   },
   createdStyle: {
     position: "absolute",
@@ -300,6 +416,32 @@ const styles = StyleSheet.create({
     fontSize: 8,
     opacity: 0.5,
   },
+  btnGroup: {
+    position: "absolute",
+    right: 5,
+    rowGap: 5,
+  },
+  editBtnOutline: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    backgroundColor: mainColor,
+    borderRadius: 5,
+  },
+  editBtn: {
+    color: "white",
+    fontSize: 10,
+    textAlign: "center",
+  },
+  deleteBtnOutline: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    backgroundColor: "red",
+    borderRadius: 5,
+  },
+  deleteBtn: {
+    color: "white",
+    fontSize: 10,
+  },
   plusIconStyle: {
     position: "absolute",
     bottom: 50,
@@ -307,9 +449,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#AFAFAF",
     padding: 12,
     borderRadius: 25,
-  },
-  closeBtn: {
-    alignSelf: "flex-end",
   },
   modelContainer: {
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -339,7 +478,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   inputGroup: {
-    rowGap: 10,
+    marginTop: 10,
   },
   buttonOutline: {
     backgroundColor: mainColor,
@@ -357,6 +496,9 @@ const styles = StyleSheet.create({
   calendarIconStyle: {
     position: "absolute",
     right: 10,
-    top: 38,
+    top: 30,
+  },
+  closeBtn: {
+    alignSelf: "flex-end",
   },
 });

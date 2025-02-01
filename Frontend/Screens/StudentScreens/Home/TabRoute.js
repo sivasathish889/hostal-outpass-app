@@ -39,8 +39,8 @@ const BottomTab = () => {
           tabBarStyle: {
             backgroundColor: mainColor,
             borderRadius: 30,
-            height: 70,
-          },
+            height: 75,
+            },
         }}
       >
         <Tab.Screen
@@ -55,14 +55,14 @@ const BottomTab = () => {
                     action == "Home"
                       ? {
                           backgroundColor: "white",
-                          marginTop: 20,
+                          marginTop: 30,
                           height: 50,
                           borderRadius: 60,
                           paddingHorizontal: 15,
                           paddingTop: 6,
                         }
                       : {
-                          marginTop: 20,
+                          marginTop: 30,
                           height: 50,
                           paddingTop: 6,
                         }
@@ -106,14 +106,14 @@ const BottomTab = () => {
                     action == "previous"
                       ? {
                           backgroundColor: "white",
-                          marginTop: 20,
+                          marginTop: 30,
                           height: 50,
                           borderRadius: 60,
                           paddingHorizontal: 10,
                           paddingTop: 6,
                         }
                       : {
-                          marginTop: 20,
+                          marginTop: 30,
                           height: 50,
                           paddingHorizontal: 20,
                           paddingTop: 6,
@@ -158,14 +158,14 @@ const BottomTab = () => {
                     action == "settings"
                       ? {
                           backgroundColor: "white",
-                          marginTop: 20,
+                          marginTop: 30,
                           height: 50,
                           borderRadius: 50,
                           paddingHorizontal: 7,
                           paddingTop: 6,
                         }
                       : {
-                          marginTop: 20,
+                          marginTop: 30,
                           height: 50,
                           paddingHorizontal: 20,
                           paddingTop: 6,
