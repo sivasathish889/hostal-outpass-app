@@ -13,6 +13,7 @@ import annaUniversity from "../../../assets/annaUniversity.jpeg";
 import { useNavigation } from "@react-navigation/native";
 import env from "../../../constants/urls";
 import { useToast } from "react-native-toast-notifications";
+import axios from "axios";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -28,20 +29,13 @@ const OTPScreen = (props) => {
   const handleSubmit = async () => {
 
   try {
-    await fetch(`${env.CLIENT_URL}${env.studentRegisterVerify}`, {
-      method: "POST",
-      body: JSON.stringify({
-        otp,
-        Token
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-    .then((res)=>res.json())
+    await axios.post(`${env.CLIENT_URL}${env.studentRegisterVerify}`, JSON.stringify({
+      otp,
+      Token
+    }) )
     .then((data)=>{
-      if(data.success){
-        toast.show(data.message, {
+      if(data.data.success){
+        toast.show(data.data.message, {
           type: "success",
           placement: "bottom",
           duration: 4000,
@@ -52,7 +46,7 @@ const OTPScreen = (props) => {
 
       }
       else {
-        toast.show(data.message, {
+        toast.show(data.data.message, {
           type: "danger",
           placement: "bottom",
           duration: 4000,

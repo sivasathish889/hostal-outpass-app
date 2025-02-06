@@ -15,6 +15,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import env from "../../../constants/urls";
 import { useToast } from "react-native-toast-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -34,7 +35,7 @@ const LoginScreen = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit =async () => {
     if (registerNumber === null || registerNumber.length == 0) {
       return setRegisterNumberError("Please Enter Register Number");
       
@@ -45,27 +46,20 @@ const LoginScreen = () => {
       registerNumber,
       password,
     };
-    fetch(`${env.CLIENT_URL}${env.studentLogin}`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((res) => res.json())
+    await axios.post(`${env.CLIENT_URL}${env.studentLogin}`,JSON.stringify(payload))
       .then((data) => {
-        if (data.success) {
-          toast.show(data.message, {
+        if (data.data.success) {
+          toast.show(data.data.message, {
             type: "success",
             placement: "bottom",
             duration: 4000,
             offset: 30,
             animationType: "slide-in",
           });
-          AsyncStorage.setItem("user", data.user);
+          AsyncStorage.setItem("user", data.data.user);
           navigation.navigate("/");
         } else {
-          toast.show(data.message, {
+          toast.show(data.data.message, {
             type: "danger",
             placement: "bottom",
             duration: 4000,

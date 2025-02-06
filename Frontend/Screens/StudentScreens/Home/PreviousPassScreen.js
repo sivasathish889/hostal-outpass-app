@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import env from "../../../constants/urls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScrollView } from 'react-native-virtualized-view';
+import axios from "axios"
 
 let mainColor = "rgb(11,117,131)";
 let acceptColor = "#6697a3"
@@ -27,15 +28,10 @@ const PreviousPassScreen = () => {
   const fetchData = async () => {
     try {
       await AsyncStorage.getItem("user").then(async(userId) => {
-        await fetch(`${env.CLIENT_URL}${env.studentAllPasses}/${userId}`, {
-            method: "GET",
-            headers: {
-              "Content-type": "application/json; charset=UTF-8",
-            },
-          })
-            .then((res) => res.json())
+
+        await axios.get(`${env.CLIENT_URL}${env.studentAllPasses}/${userId}`)
             .then((data) => {
-              setFetchPassData(data.data);
+              setFetchPassData(data.data.data);
               setRefreshing(false);
             })
             .catch((error) => console.log(error));

@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
 import env from "../../../constants/urls";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import axios from "axios";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -41,7 +42,7 @@ const ResetPasswordScreen = ({ route }) => {
     setConfirmPasswordVisible(!confrimPasswordVisible);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit =async () => {
     let payload = {
       registerNumber,
       newPassword,
@@ -52,17 +53,10 @@ const ResetPasswordScreen = ({ route }) => {
     } else if (confirmNewPassword === null || confirmNewPassword.length == 0) {
       return setConfirmNewPasswordError("Please Enter Confirm Password");
     }
-    fetch(`${env.CLIENT_URL}${env.studentChangePassword}`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((res) => res.json())
+    await axios.post(`${env.CLIENT_URL}${env.studentChangePassword}`,JSON.stringify(payload) )
       .then((data) => {
-        if (data.success) {
-          toast.show(data.message, {
+        if (data.data.success) {
+          toast.show(data.data.message, {
             type: "success",
             placement: "bottom",
             duration: 4000,
@@ -70,11 +64,11 @@ const ResetPasswordScreen = ({ route }) => {
             animationType: "slide-in",
           });
           navigation.navigate("/StudentLogin", {
-            otp: data.Token,
+            otp: data.data.Token,
             registerNumber: registerNumber,
           });
         } else {
-          toast.show(data.message, {
+          toast.show(data.data.message, {
             type: "danger",
             placement: "bottom",
             duration: 4000,
