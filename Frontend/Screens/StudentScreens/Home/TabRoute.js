@@ -25,9 +25,9 @@ const BottomTab = () => {
   const [action, setAction] = useState("Home");
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar backgroundColor={"rgb(11,117,131)"} />
+      <StatusBar backgroundColor={mainColor} />
       <View style={styles.header}>
-        <Text style={styles.headerText}>Welcome Shiva...!</Text>
+        <Text style={styles.headerText}>Welcome </Text>
         <TouchableOpacity>
           <Image source={notifiIcon} style={styles.ImageStyle} />
         </TouchableOpacity>
@@ -41,6 +41,7 @@ const BottomTab = () => {
             borderRadius: 30,
             height: 75,
             },
+            tabBarPosition:"bottom"
         }}
       >
         <Tab.Screen

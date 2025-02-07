@@ -1,19 +1,13 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  RefreshControl,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 import env from "../../../constants/urls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ScrollView } from 'react-native-virtualized-view';
-import axios from "axios"
+import { ScrollView } from "react-native-virtualized-view";
+import axios from "axios";
 
 let mainColor = "rgb(11,117,131)";
-let acceptColor = "#6697a3"
-let rejectColor = "#C94D3B"
+let acceptColor = "#6697a3";
+let rejectColor = "#C94D3B";
 let pendingColor = "#F5BC00";
 
 const PreviousPassScreen = () => {
@@ -27,78 +21,89 @@ const PreviousPassScreen = () => {
 
   const fetchData = async () => {
     try {
-      await AsyncStorage.getItem("user").then(async(userId) => {
-
-        await axios.get(`${env.CLIENT_URL}${env.studentAllPasses}/${userId}`)
-            .then((data) => {
-              setFetchPassData(data.data.data);
-              setRefreshing(false);
-            })
-            .catch((error) => console.log(error));
-        });
+      await AsyncStorage.getItem("user").then(async (userId) => {
+        await axios
+          .get(`${env.CLIENT_URL}${env.studentAllPasses}/${userId}`)
+          .then((data) => {
+            setFetchPassData(data.data.data);
+            setRefreshing(false);
+          })
+          .catch((error) => console.log(error));
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-    
-  };
-
-  const onRefresh = () => {
-    setRefreshing(true);
   };
 
   return (
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} style={styles.refreshStyle} />
-        }
-        style={styles.refreshStyle}
-        >
-          <View style={styles.header}>
-            <Text style={{color:acceptColor, fontSize:20}}>Accept </Text>
-            <Text style={{fontSize:20}}>and </Text>
-            <Text style={{color : rejectColor,fontSize:20}}>Rejecting Passes</Text>
-          </View>
-          <FlatList
-            data={fetchPassData}
-            renderItem={({ item }) => {
-              return (
-                <View style={[styles.container,{backgroundColor:`${item.status==2?acceptColor:item.status==3?rejectColor:""}`}]}>
-                  <View style={styles.titleContainer}>
-                    <Text style={styles.roomNoStyle}>
-                      {item.RoomNo.toUpperCase()}.
-                    </Text>
-                  </View>
+    <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => setRefreshing(true)}
+          style={{ flex: 1 }}
+        />
+      }
+      style={{ flex: 1 }}
+    >
+      <View style={styles.header}>
+        <Text style={{ color: acceptColor, fontSize: 20 }}>Accept </Text>
+        <Text style={{ fontSize: 20 }}>and </Text>
+        <Text style={{ color: rejectColor, fontSize: 20 }}>
+          Rejecting Passes
+        </Text>
+      </View>
+      <FlatList
+        data={fetchPassData}
+        renderItem={({ item }) => {
+          return (
+            <View
+              style={[
+                styles.container,
+                {
+                  backgroundColor: `${
+                    item.status == 2
+                      ? acceptColor
+                      : item.status == 3
+                      ? rejectColor
+                      : ""
+                  }`,
+                },
+              ]}
+            >
+              <View style={styles.titleContainer}>
+                <Text style={styles.roomNoStyle}>
+                  {item.RoomNo.toUpperCase()}.
+                </Text>
+              </View>
 
-                  <View style={{ display: "flex", paddingVertical: 10 }}>
-                    <Text style={styles.titleStyle}>{item.Purpose}</Text>
-                    <View style={styles.times}>
-                      <Text style={styles.outDateTimeStyle}>
-                        {item.OutDateTime}
-                      </Text>
-                      <Text style={{ marginEnd: 10 }}>-</Text>
-                      <Text style={styles.inDateTimeStyle}>
-                        {item.InDateTime}
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={styles.placeStyle}>{item.Distination}</Text>
-                  <Text style={styles.createdStyle}>
-                    {new Date(item.createdAt).getDate() == String(now.getDate())
-                      ? "Today"
-                      : new Date(item.createdAt).getDate() + 1 ==
-                        String(now.getDate())
-                      ? "YesterDay"
-                      : new Date(item.createdAt)
-                          .toLocaleString(undefined, "Asia/Kolkata")
-                          .split(",")[0]}
+              <View style={{ display: "flex", paddingVertical: 10 }}>
+                <Text style={styles.titleStyle}>{item.Purpose}</Text>
+                <View style={styles.times}>
+                  <Text style={styles.outDateTimeStyle}>
+                    {item.OutDateTime}
                   </Text>
+                  <Text style={{ marginEnd: 10 }}>-</Text>
+                  <Text style={styles.inDateTimeStyle}>{item.InDateTime}</Text>
                 </View>
-              );
-            }}
-            keyExtractor={(item) => item._id}
-          />
-        
-      </ScrollView>
+              </View>
+              <Text style={styles.placeStyle}>{item.Distination}</Text>
+              <Text style={styles.createdStyle}>
+                {new Date(item.createdAt).getDate() == String(now.getDate())
+                  ? "Today"
+                  : new Date(item.createdAt).getDate() + 1 ==
+                    String(now.getDate())
+                  ? "YesterDay"
+                  : new Date(item.createdAt)
+                      .toLocaleString(undefined, "Asia/Kolkata")
+                      .split(",")[0]}
+              </Text>
+            </View>
+          );
+        }}
+        keyExtractor={(item) => item._id}
+      />
+    </ScrollView>
   );
 };
 
@@ -114,12 +119,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  header :{
-    marginVertical : 10,
-    display :"flex",
-    flexDirection : "row",
-    justifyContent : "center",
-    alignItems :"center"
+  header: {
+    marginVertical: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   titleContainer: {
     display: "flex",
@@ -171,8 +176,5 @@ const styles = StyleSheet.create({
   emptyMsg: {
     fontSize: 30,
     opacity: 0.5,
-  },
-  refreshStyle: {
-    flex: 1,
   },
 });

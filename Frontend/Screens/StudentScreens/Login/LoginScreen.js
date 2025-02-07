@@ -46,7 +46,7 @@ const LoginScreen = () => {
       registerNumber,
       password,
     };
-    await axios.post(`${env.CLIENT_URL}${env.studentLogin}`,JSON.stringify(payload))
+    await axios.post(`${env.CLIENT_URL}${env.studentLogin}`,payload)
       .then((data) => {
         if (data.data.success) {
           toast.show(data.data.message, {

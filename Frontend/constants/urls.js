@@ -1,7 +1,7 @@
 
 
 export default env = {
-    CLIENT_URL : 'http://192.168.228.1:5000/',
+    CLIENT_URL : 'http://192.168.45.1:5000/',
 
     studentRegister : 'student/register',
     studentRegisterVerify : 'student/register/verify',
@@ -15,5 +15,6 @@ export default env = {
     studentDeletePass : 'student/passDelete',
     studentPendingPasses : 'student/pendingRequests',
     studentAllPasses : 'student/AllRequests',
+    studentData : 'student/'
 
 }

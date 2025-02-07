@@ -26,6 +26,7 @@ const {
   studentChangePassword,
 } = require("../Controller/studentController/studentForgetPassword");
 const newRequestModel = require("../Model/Schema/newRequestModel");
+const studentModel = require("../Model/Schema/studentModel");
 
 routes.post("/student/register", studentRegisterController);
 routes.post("/student/register/verify", verifyOtpController);
@@ -39,5 +40,16 @@ routes.put("/student/passUpdate", editingRequestController);
 routes.delete("/student/passDelete/:passId",deletingPassController)
 
 routes.get("/student/AllRequests/:userId", preRequestController);
+routes.get('/student/:userId',async(req,res)=>{
+  const userId = req.params.userId;
+  try {
+    await studentModel.find({_id:userId})
+    .then((data)=>{
+      return res.status(200).json({message : "Ok", data, success : true})
+    })
+  } catch (error) {
+    
+  }
+})
 
 module.exports = routes;

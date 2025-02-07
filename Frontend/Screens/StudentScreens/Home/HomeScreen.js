@@ -9,7 +9,9 @@ import {
   StatusBar,
   TextInput,
   Alert,
+  RefreshControl,
 } from "react-native";
+
 import React, { useEffect, useState } from "react";
 import plusIcon from "../../../assets/Plus.png";
 
@@ -21,8 +23,7 @@ import { useToast } from "react-native-toast-notifications";
 import XIcon from "../../../assets/XIcon.png";
 import calendarIcon from "../../../assets/Calendar.png";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import axios  from "axios";
-
+import axios from "axios";
 
 let mainColor = "rgb(11,117,131)";
 let secondaryColor = "#F5BC00";
@@ -42,6 +43,8 @@ const HomeScreen = () => {
   const [inDateTime, setinDateTime] = useState(null);
   const [outDateTime, setoutDateTime] = useState(null);
   const [passId, setPassId] = useState(null);
+
+  const [refreshing, setRefreshing] = useState(false);
 
   let navigation = useNavigation();
   let toast = useToast();
@@ -70,16 +73,22 @@ const HomeScreen = () => {
       },
     ]);
   };
+
   useEffect(() => {
     fetchData();
-  }, [dataRefresh]);
+  }, [dataRefresh,refreshing]);
+
+  
 
   const fetchData = async () => {
     await AsyncStorage.getItem("user").then((userId) => {
       setUserId(userId);
-      
-      axios.get(`${env.CLIENT_URL}${env.studentPendingPasses}/${userId}`)
-        .then((data) => setFetchPassData(data.data));
+      axios
+        .get(`${env.CLIENT_URL}${env.studentPendingPasses}/${userId}`)
+        .then((data) => {
+          setFetchPassData(data.data);
+          setRefreshing(false)
+        });
     });
   };
 
@@ -92,7 +101,11 @@ const HomeScreen = () => {
       outDateTime,
       passId,
     };
-    await axios.put(`${env.CLIENT_URL}${env.studentEditingPass}`, JSON.stringify(payload))
+    await axios
+      .put(
+        `${env.CLIENT_URL}${env.studentEditingPass}`,
+        JSON.stringify(payload)
+      )
       .then((data) => {
         if (data.data.success) {
           toast.show(data.data.message, {
@@ -118,7 +131,8 @@ const HomeScreen = () => {
       .catch((error) => console.log(error));
   };
   const handlePassDelete = async (deletePassId) => {
-    await axios.delete(`${env.CLIENT_URL}${env.studentDeletePass}/${deletePassId}`)
+    await axios
+      .delete(`${env.CLIENT_URL}${env.studentDeletePass}/${deletePassId}`)
       .then((data) => {
         if (data.data.success) {
           toast.show(data.data.message, {
@@ -204,6 +218,12 @@ const HomeScreen = () => {
           );
         }}
         keyExtractor={(item) => item._id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => setRefreshing(true)}
+          />
+        }
       />
 
       <TouchableOpacity
@@ -221,7 +241,6 @@ const HomeScreen = () => {
         setPassModelVisible={setPassModelVisible}
         dataRefresh={dataRefresh}
       />
-
       {/* Edit Pass Model */}
       <View style={styles.modelContainer}>
         <Modal
@@ -343,6 +362,7 @@ const HomeScreen = () => {
         </Modal>
       </View>
     </View>
+    // </ScrollView>
   );
 };
 

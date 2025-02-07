@@ -27,12 +27,13 @@ const OTPScreen = (props) => {
   let Token = props.route.params.token;
   
   const handleSubmit = async () => {
-
-  try {
-    await axios.post(`${env.CLIENT_URL}${env.studentRegisterVerify}`, JSON.stringify({
+    let payload = {
       otp,
       Token
-    }) )
+    }
+
+  try {
+    await axios.post(`${env.CLIENT_URL}${env.studentRegisterVerify}`, payload )
     .then((data)=>{
       if(data.data.success){
         toast.show(data.data.message, {

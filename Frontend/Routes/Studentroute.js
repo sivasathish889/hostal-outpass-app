@@ -102,12 +102,7 @@ const StudentRoute = () => {
           headerShown : false
         })}
       />
-      
-
-
-
-
-
+    
 
       <Stack.Screen
         name="/WardenLogin"

@@ -82,7 +82,7 @@ const RegisterScreen = () => {
       password,
       confirmPassword,
     };
-    axios.post(`${env.CLIENT_URL}${env.studentRegister}`,JSON.stringify(payload))
+    axios.post(`${env.CLIENT_URL}${env.studentRegister}`,payload)
       .then((data) => {
         if (data.data.success) {
           toast.show(data.data.message, {
