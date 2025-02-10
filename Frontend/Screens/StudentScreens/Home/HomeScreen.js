@@ -362,7 +362,6 @@ const HomeScreen = () => {
         </Modal>
       </View>
     </View>
-    // </ScrollView>
   );
 };
 

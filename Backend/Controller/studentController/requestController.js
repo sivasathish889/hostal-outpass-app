@@ -32,25 +32,22 @@ const newRequestController = async (req, res) => {
         .status(200)
         .json({ message: "Request Created", success: true });
     } else {
-      return res
-        .status(500)
-        .json({ message: "Invalid Creditionals", success: false });
+      return res.json({ message: "Invalid Creditionals", success: false });
     }
   } catch (error) {
-    return res.status(500).json({ message: "Server Error", success: false });
+    return res.json({ message: "Server Error", success: false });
   }
 };
 
 const pendingRequestsController = (req, res) => {
   let { userId } = req.params;
   newRequestModel
-    .find({ User: userId, status:1 })
+    .find({ User: userId, status: 1 })
     .then((pass) => {
       return res.status(200).json({ pass, success: true });
     })
-    .catch((error) =>{
-    return res.status(500).json({ message: "Server Error", success: false });
-
+    .catch((error) => {
+      return res.json({ message: "Server Error", success: false });
     });
 };
 
@@ -71,14 +68,13 @@ const editingRequestController = async (req, res) => {
         { new: true }
       )
       .catch((error) => {
-        return res.status(500).json({ message: "server Error", success: false });
-
+        return res.json({ message: "server Error", success: false });
       });
     return res
       .status(200)
       .json({ message: "Update SuccessFully", success: true });
   } catch (error) {
-    return res.status(500).json({ message: "Server Error", success: false });
+    return res.json({ message: "Server Error", success: false });
   }
 };
 
@@ -90,15 +86,14 @@ const deletingPassController = async (req, res) => {
 const preRequestController = async (req, res) => {
   const userId = req.params.userId;
   await newRequestModel
-    .find({ User: userId,  $or: [{ status: "3"}, {status: "2" }] })
+    .find({ User: userId, $or: [{ status: "3" }, { status: "2" }] })
     .then((data) => {
       return res.status(200).json({ message: "Users", data, success: true });
     })
     .catch((error) => {
-      return res.status(401).json({ message: error.message, success: false });
+      return res.json({ message: error.message, success: false });
     });
 };
-
 
 module.exports = {
   newRequestController,

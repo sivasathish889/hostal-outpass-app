@@ -1,5 +1,4 @@
 import {
-  Image,
   ImageBackground,
   StyleSheet,
   Text,
@@ -16,6 +15,7 @@ import env from "../../../constants/urls";
 import { useToast } from "react-native-toast-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -35,10 +35,9 @@ const LoginScreen = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit =async () => {
+  const handleSubmit = async () => {
     if (registerNumber === null || registerNumber.length == 0) {
       return setRegisterNumberError("Please Enter Register Number");
-      
     } else if (password === null || password.length == 0) {
       return setPasswordError("Please Enter Password");
     }
@@ -46,7 +45,8 @@ const LoginScreen = () => {
       registerNumber,
       password,
     };
-    await axios.post(`${env.CLIENT_URL}${env.studentLogin}`,payload)
+    await axios
+      .post(`${env.CLIENT_URL}${env.studentLogin}`, payload)
       .then((data) => {
         if (data.data.success) {
           toast.show(data.data.message, {
@@ -90,33 +90,39 @@ const LoginScreen = () => {
               keyboardType="number-pad"
               value={registerNumber}
               inputMode="numeric"
-              />
+            />
             {registerNumberError != null ? (
-              <Text style={{color:"red"}}>{registerNumberError}</Text>
+              <Text style={{ color: "red" }}>{registerNumberError}</Text>
             ) : (
               ""
             )}
-            <Text style={styles.lable}>Password :</Text>
-            <TextInput
-              placeholder="Enter Your Password"
-              style={styles.input}
-              placeholderTextColor={placeholderTextColor}
-              secureTextEntry={!showPassword}
-              onChangeText={(text) => {
-                setPassword(text);
-                setPasswordError(null);
-              }}
-              value={password}
-              inputMode="text"
+            <View>
+              <Text style={styles.lable}>Password :</Text>
+              <TextInput
+                placeholder="Enter Your Password"
+                style={styles.input}
+                placeholderTextColor={placeholderTextColor}
+                secureTextEntry={!showPassword}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setPasswordError(null);
+                }}
+                value={password}
+                inputMode="text"
               />
-            {passwordError != null ? <Text style={{color:"red"}}>{passwordError}</Text> : ""}
-            <MaterialCommunityIcons
-              name={showPassword ? "eye" : "eye-off"}
-              size={18}
-              color="black"
-              style={styles.icon}
-              onPress={toggleShowPassword}
-            />
+              {passwordError != null ? (
+                <Text style={{ color: "red" }}>{passwordError}</Text>
+              ) : (
+                ""
+              )}
+              <MaterialCommunityIcons
+                name={showPassword ? "eye" : "eye-off"}
+                size={18}
+                color="black"
+                style={styles.icon}
+                onPress={toggleShowPassword}
+              />
+            </View>
             <Text
               style={styles.forgetPass}
               onPress={() => navigation.navigate("/StudentLoginForget")}
@@ -124,14 +130,14 @@ const LoginScreen = () => {
               Forget/Change Password
             </Text>
           </View>
-          <Text style={{ marginTop: 10 }}>
+          <Text style={{ marginTop: 10, fontSize: RFPercentage(1.5) }}>
             If you dont have account..
             <Text
               onPress={() => navigation.navigate("/StudentRegister")}
               style={{
                 color: mainColor,
                 textDecorationLine: "underline",
-                fontSize: 16,
+                fontSize: RFPercentage(2),
               }}
             >
               Please Register
@@ -171,14 +177,14 @@ const styles = StyleSheet.create({
   },
   heading: {
     textAlign: "center",
-    fontSize: 35,
+    fontSize: RFPercentage(5),
     color: mainColor,
     marginTop: 15,
     fontWeight: "700",
   },
   subHead: {
     textAlign: "center",
-    fontSize: 25,
+    fontSize: RFPercentage(3),
   },
   buttonOutline: {
     backgroundColor: mainColor,
@@ -190,7 +196,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     color: "white",
-    fontSize: 15,
+    fontSize: RFPercentage(2),
   },
   inputgroup: {
     marginTop: 25,
@@ -213,7 +219,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: "absolute",
-    bottom: 57,
-    right: 10,
+    bottom: "22%",
+    right: "4%",
   },
 });

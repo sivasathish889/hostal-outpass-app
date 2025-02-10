@@ -38,7 +38,6 @@ const studentRegisterController = async (req, res) => {
           .then(async (user) => {
             if (user.length > 0) {
               return res
-                .status(401)
                 .json({ message: "Already Regsitered", success: false });
             } else {
               let hashingPassword = generateHashPassword(password);
@@ -67,16 +66,14 @@ const studentRegisterController = async (req, res) => {
           });
       } else {
         return res
-          .status(401)
           .json({ message: "Password Does Not Matched", success: false });
       }
     } else {
       return res
-        .status(400)
         .json({ message: "Please Fill The details", success: false });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message, success: false });
+    return res.json({ message: error.message, success: false });
   }
 };
 
@@ -103,14 +100,13 @@ const verifyOtpController = async (req, res) => {
           .json({ message: "Register Successfully..", success: true });
       } else {
         return res
-          .status(401)
           .json({ message: "Incorrect OTP", success: false });
       }
     } else {
-      return res.status(401).json({ message: "OTP expired" });
+      return res.json({ message: "OTP expired" });
     }
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.json({ message: error.message });
   }
 };
 

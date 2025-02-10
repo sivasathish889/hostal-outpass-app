@@ -1,19 +1,34 @@
-import { Image, Modal, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Modal,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import XIcon from "../../../../assets/XIcon.png";
 import calendarIcon from "../../../../assets/Calendar.png";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import DatePicker from "react-native-date-picker";
 import { useNavigation } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
 import env from "../../../../constants/urls";
-import axios from "axios"
-
+import axios from "axios";
 
 let mainColor = "rgb(11,117,131)";
 let secondaryColor = "#F5BC00";
 
 const NewPassModel = (props) => {
-    const {setDataRefresh,userId,passModelVisible,setPassModelVisible,dataRefresh} = props
+  const {
+    setDataRefresh,
+    userId,
+    passModelVisible,
+    setPassModelVisible,
+    dataRefresh,
+  } = props;
   const [isInDatePickerVisible, setInDatePickerVisible] = useState(false);
   const [isOutDatePickerVisible, setOutDatePickerVisible] = useState(false);
 
@@ -54,7 +69,8 @@ const NewPassModel = (props) => {
       outDateTime,
       userId,
     };
-    await axios.post(`${env.CLIENT_URL}${env.studentNewRequest}`,payload)
+    await axios
+      .post(`${env.CLIENT_URL}${env.studentNewRequest}`, payload)
       .then((data) => {
         if (data.data.success) {
           toast.show(data.data.message, {
@@ -95,7 +111,12 @@ const NewPassModel = (props) => {
   };
   return (
     <View style={styles.modelContainer}>
-      <Modal animationType="slide" transparent={true} visible={passModelVisible}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={passModelVisible}
+      >
+
         <View style={styles.modelContainer}>
           <StatusBar backgroundColor={"rgba(0,0,0,0.5)"} />
           <View style={styles.ModelContent}>
@@ -245,55 +266,55 @@ const NewPassModel = (props) => {
 export default NewPassModel;
 
 const styles = StyleSheet.create({
-    modelContainer: {
-        backgroundColor: "rgba(0,0,0,0.5)",
-      },
-      ModelContent: {
-        padding: 20,
-        margin: "10%",
-        marginVertical: "50%",
-        backgroundColor: "#D9D9D9",
-        borderRadius: 10,
-      },
-      modelHeading: {
-        textAlign: "center",
-        fontSize: 20,
-        color: mainColor,
-        textDecorationLine: "underline",
-        marginBottom: 20,
-      },
-      input: {
-        backgroundColor: "white",
-        paddingStart: 10,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: "rgb(115,115,115)",
-      },
-      inputLabel: {
-        fontSize: 18,
-      },
-      inputGroup: {
-        marginTop: 10,
-      },
-      buttonOutline: {
-        backgroundColor: mainColor,
-        borderRadius: 5,
-        padding: 10,
-        borderBlockColor: "black",
-        marginVertical: 20,
-        paddingHorizontal: 40,
-      },
-      btn: {
-        color: "white",
-        fontSize: 15,
-        textAlign: "center",
-      },
-      calendarIconStyle: {
-        position: "absolute",
-        right: 10,
-        top: 30,
-      },
-      closeBtn: {
-        alignSelf: "flex-end",
-      },
+  modelContainer: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  ModelContent: {
+    padding: 20,
+    margin: "10%",
+    marginVertical: "50%",
+    backgroundColor: "#D9D9D9",
+    borderRadius: 10,
+  },
+  modelHeading: {
+    textAlign: "center",
+    fontSize: 20,
+    color: mainColor,
+    textDecorationLine: "underline",
+    marginBottom: 20,
+  },
+  input: {
+    backgroundColor: "white",
+    paddingStart: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "rgb(115,115,115)",
+  },
+  inputLabel: {
+    fontSize: 18,
+  },
+  inputGroup: {
+    marginTop: 10,
+  },
+  buttonOutline: {
+    backgroundColor: mainColor,
+    borderRadius: 5,
+    padding: 10,
+    borderBlockColor: "black",
+    marginVertical: 20,
+    paddingHorizontal: 40,
+  },
+  btn: {
+    color: "white",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  calendarIconStyle: {
+    position: "absolute",
+    right: 10,
+    top: 30,
+  },
+  closeBtn: {
+    alignSelf: "flex-end",
+  },
 });

@@ -8,7 +8,8 @@ const Logger = require("./middleware/logger")
 const studentRouter = require("./Routes/studentRouter");
 const wardenRouter = require("./Routes/wardenRouter");
 const securityRouter = require("./Routes/securityRouter");
-const adminPanel = require("./Routes/adminPanel")
+const adminPanel = require("./Routes/adminPanel");
+const wardenModel = require("./Model/Schema/wardenModel");
 
 // envoronment variable
 env.config()
@@ -30,7 +31,6 @@ app.use(cors({
 db()
 
 app.use(Logger)
-
 // Routes
 app.use("/",studentRouter)
 app.use("/warden",wardenRouter)

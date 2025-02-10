@@ -36,13 +36,11 @@ const studentForgetPassword = async (req, res) => {
             });
         } else {
           return res
-            .status(400)
             .json({ message: "Regsiter Number Not Found", success: false });
         }
       });
   } else {
     return res
-      .status(400)
       .json({ message: "Invalid Regsiter Number", success: false });
   }
 };
@@ -56,7 +54,7 @@ const studentVerifyOtp = (req, res) => {
       .status(200)
       .json({ message: "OTP successfully verified", success: true });
   } else {
-    return res.status(400).json({ message: "Wrong OTP", success: false });
+    return res.json({ message: "Wrong OTP", success: false });
   }
 };
 
@@ -93,23 +91,19 @@ const studentChangePassword = (req, res) => {
               }
             } else {
               return res
-                .status(400)
                 .json({ message: "Regsiter Number Not Found", success: false });
             }
           });
       } else {
         return res
-          .status(400)
           .json({ message: "Please Enter Same Password", success: false });
       }
     } else {
       return res
-        .status(400)
         .json({ message: "Please Enter Password", success: false });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Server error", success: false });
+    return res.json({ message: "Server error", success: false });
   }
 };
 

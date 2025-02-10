@@ -9,6 +9,7 @@ import WelcomeScreen from "../Screens/WelcomeScreen";
 import InitialScreen from "../Screens/InitialScreen";
 import WardenLoginScreen from "../Screens/WardenScreens/LoginScreen";
 import HomeRoute from "../Screens/StudentScreens/Home/TabRoute";
+import WardenHomeRoute from "../Screens/WardenScreens/Home/TabRoute";
 
 const StudentRoute = () => {
   let Stack = createNativeStackNavigator();
@@ -84,7 +85,6 @@ const StudentRoute = () => {
         name="/Welcome"
         component={WelcomeScreen}
         options={{ headerShown: false }}
-        
       />
 
       <Stack.Screen
@@ -99,15 +99,30 @@ const StudentRoute = () => {
           title: `Welcome`,
           headerStyle: { backgroundColor: "rgb(11,117,131)" },
           headerTintColor: "white",
-          headerShown : false
+          headerShown: false,
         })}
       />
-    
 
       <Stack.Screen
         name="/WardenLogin"
         component={WardenLoginScreen}
-        options={{ headerShown: false }}
+        options={{
+          title: "Login",
+          headerStyle: { backgroundColor: "rgb(11,117,131)" },
+          headerTintColor: "white",
+        }}
+      />
+
+      <Stack.Screen
+        name="/WardenHome"
+        component={WardenHomeRoute}
+        options={{
+          title: "Welcome",
+          headerStyle: { backgroundColor: "rgb(11,117,131)" },
+          headerTintColor: "white",
+          headerShown: false,
+
+        }}
       />
     </Stack.Navigator>
   );

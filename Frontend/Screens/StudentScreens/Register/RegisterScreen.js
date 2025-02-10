@@ -14,6 +14,7 @@ import env from "../../../constants/urls";
 import { Dropdown } from "react-native-element-dropdown";
 import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
+import { RFPercentage } from "react-native-responsive-fontsize";
 
 let mainColor = "rgb(11,117,131)";
 let placeholderTextColor = "#AFAFAF";
@@ -202,6 +203,7 @@ const RegisterScreen = () => {
                 placeholderStyle={{
                   color: placeholderTextColor,
                   paddingStart: 10,
+                  fontSize:RFPercentage(1.6)
                 }}
                 itemContainerStyle={{ borderRadius: 10 }}
               />
@@ -326,7 +328,7 @@ const RegisterScreen = () => {
               style={{
                 color: mainColor,
                 textDecorationLine: "underline",
-                fontSize: 18,
+                fontSize: RFPercentage(2),
               }}
               onPress={() => navigation.navigate("/StudentLogin")}
             >
@@ -365,14 +367,14 @@ const styles = StyleSheet.create({
   },
   mainHead: {
     textAlign: "center",
-    fontSize: 35,
+    fontSize: RFPercentage(4),
     color: mainColor,
     fontWeight: "700",
   },
   subHead: {
     textAlign: "center",
-    fontSize: 25,
-    marginBottom: 20,
+    fontSize: RFPercentage(2),
+    marginBottom: "5%",
     textDecorationLine: "underline",
   },
   inputRows: {
@@ -395,11 +397,11 @@ const styles = StyleSheet.create({
     borderColor: "rgb(115,115,115)",
     width: "100%",
     color: "black",
-    fontSize: 14,
+    fontSize: RFPercentage(1.3),
     paddingStart: 15,
   },
   label: {
-    fontSize: 16,
+    fontSize: RFPercentage(1.6),
   },
   buttonOutline: {
     backgroundColor: mainColor,
@@ -411,7 +413,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     color: "white",
-    fontSize: 15,
+    fontSize: RFPercentage(1.6),
   },
   dropdown: {
     backgroundColor: "#D9D9D9",
@@ -420,14 +422,14 @@ const styles = StyleSheet.create({
     borderColor: "rgb(115,115,115)",
     width: "100%",
     color: "black",
-    fontSize: 10,
+    fontSize: RFPercentage(1.6),
     height: 42,
     borderRadius: 10,
-    paddingStart: 20,
+    paddingStart: 10,
   },
   errorText: {
     color: "red",
-    fontSize: 12,
+    fontSize: RFPercentage(2),
     marginStart: 10,
     marginTop: 5,
   },

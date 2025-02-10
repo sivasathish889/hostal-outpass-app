@@ -9,16 +9,18 @@ const studentLoginController = async (req, res) => {
         if (comparePassword(password, user[0]?.Password)) {
           return res
             .status(200)
-            .json({ message: "Login Successfull", success: true, user : user[0]?._id.toString()});
+            .json({
+              message: "Login Successfull",
+              success: true,
+              user: user[0]?._id.toString(),
+            });
         } else {
           return res
-            .status(404)
             .json({ message: "Incorrect Password", success: false });
         }
       } else {
         return res
-          .status(404)
-          .json({ message: "Register Number Not found", success: false });
+          .json({ message: "Register Number Not found", success: false })
       }
     });
   } catch (error) {
