@@ -9,34 +9,37 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import env from "../../../constants/urls";
 import { useNavigation } from "@react-navigation/native";
 import { useToast } from "react-native-toast-notifications";
 import axios from "axios";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { RFPercentage } from "react-native-responsive-fontsize";
+import Spinner from "react-native-loading-spinner-overlay";
 
 let mainColor = "rgb(11,117,131)";
 let secondaryColor = "#F5BC00";
+
 const HomeScreen = () => {
-  let navigation = useNavigation();
   let toast = useToast();
   let now = new Date();
 
   const [fetchPassData, setFetchPassData] = useState({});
   const [dataRefresh, setDataRefresh] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [spinnerVisible, setSpinnerVisible] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, [dataRefresh, refreshing]);
 
   const fetchData = async () => {
-      axios
-        .get(`${env.CLIENT_URL}${env.wardenPendingPass}`)
-        .then((data) => {
-          setFetchPassData(data.data.data);
-          setRefreshing(false);
-        });
+    axios.get(`${env.CLIENT_URL}${env.wardenPendingPass}`).then((data) => {
+      setSpinnerVisible(true);
+      setFetchPassData(data.data.pass);
+      setSpinnerVisible(false)
+      setRefreshing(false);
+    });
   };
 
   const AlertingAction = (action, id) => {
@@ -77,83 +80,99 @@ const HomeScreen = () => {
             });
           }
         })
-        .catch((error)=>console.log(error))
-        
-    }
-    else if(action === "Reject"){
+        .catch((error) => console.log(error));
+    } else if (action === "Reject") {
       axios
-      .put(`${env.CLIENT_URL}${env.wardenPassReject}/${id}`)
-      .then((data) => {
-        if (data.data.success) {
-          toast.show(data.data.message, {
-            type: "success",
-            placement: "bottom",
-            duration: 4000,
-            offset: 30,
-            animationType: "slide-in",
-          });
-          setDataRefresh(!dataRefresh);
-        } else {
-          toast.show(data.data.message, {
-            type: "danger",
-            placement: "bottom",
-            duration: 4000,
-            offset: 30,
-            animationType: "slide-in",
-          });
-        }
-      })
-      .catch((error)=>console.log(error))
+        .put(`${env.CLIENT_URL}${env.wardenPassReject}/${id}`)
+        .then((data) => {
+          if (data.data.success) {
+            toast.show(data.data.message, {
+              type: "success",
+              placement: "bottom",
+              duration: 4000,
+              offset: 30,
+              animationType: "slide-in",
+            });
+            setDataRefresh(!dataRefresh);
+          } else {
+            toast.show(data.data.message, {
+              type: "danger",
+              placement: "bottom",
+              duration: 4000,
+              offset: 30,
+              animationType: "slide-in",
+            });
+          }
+        })
+        .catch((error) => console.log(error));
     }
   };
   return (
     <View style={{ flex: 1 }}>
+      <Spinner
+        visible={spinnerVisible}
+        textContent={"Loading..."}
+        textStyle={{ color: "#FFF" }}
+      />
       <FlatList
         data={fetchPassData}
         renderItem={({ item }) => {
           return (
             <View style={styles.container}>
-              <View style={styles.titleContainer}>
+              <View style={styles.title}>
                 <Text style={styles.roomNoStyle}>
                   {item.RoomNo.toUpperCase()}.
                 </Text>
               </View>
 
-              <View style={{ display: "flex", paddingVertical: 10 }}>
-                <Text style={styles.titleStyle}>{item.Purpose}</Text>
-                <View style={styles.times}>
-                  <Text style={styles.outDateTimeStyle}>
-                    {item.OutDateTime}
-                  </Text>
-                  <Text style={{ marginEnd: 10 }}>-</Text>
-                  <Text style={styles.inDateTimeStyle}>{item.InDateTime}</Text>
+              <View style={styles.detailsContainer}>
+                <View style={{ display: "flex", paddingVertical: 15 }}>
+                  <View style={styles.titleStyle}>
+                    <Text style={styles.nameStyle}>{item.name}</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text style={styles.department}>{item.year} year - </Text>
+                      <Text style={styles.department}>{item.Department} </Text>
+                    </View>
+                  </View>
                 </View>
+
+                <View>
+                  <Text style={styles.placeStyle}>{item.Distination}</Text>
+                  <View style={styles.times}>
+                    <Text style={styles.outDateTimeStyle}>
+                      {item.OutDateTime}
+                    </Text>
+                    <Text>-</Text>
+                    <Text style={styles.inDateTimeStyle}>
+                      {item.InDateTime}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.btnGroup}>
+                  <TouchableOpacity
+                    onPress={() => AlertingAction("Accept", item._id)}
+                  >
+                    <AntDesign name="checkcircle" size={30} color="green" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => AlertingAction("Reject", item._id)}
+                  >
+                    <AntDesign name="closecircle" size={30} color="red" />
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={styles.createdStyle}>
+                  {new Date(item.createdAt).getDate() == String(now.getDate())
+                    ? "Today"
+                    : new Date(item.createdAt).getDate() + 1 ==
+                      String(now.getDate())
+                    ? "YesterDay"
+                    : new Date(item.createdAt)
+                        .toLocaleString(undefined, "Asia/Kolkata")
+                        .split(",")[0]}
+                </Text>
               </View>
-              <Text style={styles.placeStyle}>{item.Distination}</Text>
-              <View style={styles.btnGroup}>
-                <TouchableOpacity
-                  style={styles.editBtnOutline}
-                  onPress={() => AlertingAction("Accept", item._id)}
-                >
-                  <Text style={styles.editBtn}>Accept</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.deleteBtnOutline}
-                  onPress={() => AlertingAction("Reject", item._id)}
-                >
-                  <Text style={styles.deleteBtn}>Reject</Text>
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.createdStyle}>
-                {new Date(item.createdAt).getDate() == String(now.getDate())
-                  ? "Today"
-                  : new Date(item.createdAt).getDate() + 1 ==
-                    String(now.getDate())
-                  ? "YesterDay"
-                  : new Date(item.createdAt)
-                      .toLocaleString(undefined, "Asia/Kolkata")
-                      .split(",")[0]}
-              </Text>
             </View>
           );
         }}
@@ -181,7 +200,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  titleContainer: {
+  detailsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
+  },
+  title: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -200,40 +225,43 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: -5,
   },
+  department: {
+    fontSize: RFPercentage(2),
+  },
+  nameStyle: {
+    fontSize: RFPercentage(2.5),
+  },
   times: {
-    display: "flex",
     flexDirection: "row",
-    marginTop: 5,
-    marginStart: 10,
   },
   inDateTimeStyle: {
-    width: 80,
+    width: 60,
     marginStart: 5,
+    fontSize: RFPercentage(1.2),
+    textAlign: "center",
   },
   outDateTimeStyle: {
-    width: 80,
+    maxWidth: 60,
+    fontSize: RFPercentage(1.2),
+    textAlign: "center",
   },
   placeStyle: {
-    paddingHorizontal: 20,
+    textAlign: "center",
+    fontSize: RFPercentage(2),
   },
   createdStyle: {
     position: "absolute",
     right: 3,
-    top: 3,
+    top: 1,
     fontSize: 8,
     opacity: 0.5,
   },
   btnGroup: {
-    position: "absolute",
-    right: 5,
-    rowGap: 5,
+    columnGap: 8,
+    flexDirection: "row",
+    marginEnd: "5%",
   },
-  editBtnOutline: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    backgroundColor: mainColor,
-    borderRadius: 5,
-  },
+
   editBtn: {
     color: "white",
     fontSize: 10,

@@ -106,7 +106,7 @@ const verifyOtpController = async (req, res) => {
       return res.json({ message: "OTP expired" });
     }
   } catch (error) {
-    return res.json({ message: error.message });
+    return res.json({ message: error.message , success:false});
   }
 };
 

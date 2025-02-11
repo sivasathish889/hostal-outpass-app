@@ -49,7 +49,6 @@ const SettingScreen = () => {
     }
   };
 
-  console.log(fetchingData[0]?.name);
 
   return (
     <View style={styles.container}>

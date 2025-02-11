@@ -56,6 +56,7 @@ const LoginScreen = () => {
             offset: 30,
             animationType: "slide-in",
           });
+          console.log(data.data.user)
           AsyncStorage.setItem("warden", data.data.user);
           navigation.navigate("/WardenHome");
         } else {
@@ -88,6 +89,7 @@ const LoginScreen = () => {
                 setUserNameError(null);
               }}
               value={userName}
+              key={"warden"}
             />
             {userNameError != null ? (
               <Text style={{ color: "red" }}>{userNameError}</Text>

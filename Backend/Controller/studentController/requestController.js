@@ -79,20 +79,28 @@ const editingRequestController = async (req, res) => {
 };
 
 const deletingPassController = async (req, res) => {
-  await newRequestModel.findByIdAndDelete(req.params.passId);
-  return res.status(200).json({ message: "Pass Deleted", success: true });
+  try {
+    await newRequestModel.findByIdAndDelete(req.params.passId);
+    return res.status(200).json({ message: "Pass Deleted", success: true });
+  } catch (error) {
+    return res.json({ message: "Server Error", success: false });
+  }
 };
 
 const preRequestController = async (req, res) => {
-  const userId = req.params.userId;
-  await newRequestModel
-    .find({ User: userId, $or: [{ status: "3" }, { status: "2" }] })
-    .then((data) => {
-      return res.status(200).json({ message: "Users", data, success: true });
-    })
-    .catch((error) => {
-      return res.json({ message: error.message, success: false });
-    });
+  try {
+    const userId = req.params.userId;
+    await newRequestModel
+      .find({ User: userId, $or: [{ status: "3" }, { status: "2" }] })
+      .then((data) => {
+        return res.status(200).json({ message: "Users", data, success: true });
+      })
+      .catch((error) => {
+        return res.json({ message: error.message, success: false });
+      });
+  } catch (error) {
+    return res.json({ message: "Server Error", success: false });
+  }
 };
 
 module.exports = {

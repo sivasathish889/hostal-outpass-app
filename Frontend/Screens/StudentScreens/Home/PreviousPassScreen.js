@@ -4,6 +4,7 @@ import env from "../../../constants/urls";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ScrollView } from "react-native-virtualized-view";
 import axios from "axios";
+import Spinner from "react-native-loading-spinner-overlay";
 
 let mainColor = "rgb(11,117,131)";
 let acceptColor = "#6697a3";
@@ -14,6 +15,7 @@ const PreviousPassScreen = () => {
   let now = new Date();
   const [fetchPassData, setFetchPassData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const [spinnerVisible, setSpinnerVisible] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -25,7 +27,9 @@ const PreviousPassScreen = () => {
         await axios
           .get(`${env.CLIENT_URL}${env.studentAllPasses}/${userId}`)
           .then((data) => {
+            setSpinnerVisible(true);
             setFetchPassData(data.data.data);
+            setSpinnerVisible(false);
             setRefreshing(false);
           })
           .catch((error) => console.log(error));
@@ -46,6 +50,11 @@ const PreviousPassScreen = () => {
       }
       style={{ flex: 1 }}
     >
+      <Spinner
+        visible={spinnerVisible}
+        textContent={"Loading..."}
+        textStyle={{ color: "#FFF" }}
+      />
       <View style={styles.header}>
         <Text style={{ color: acceptColor, fontSize: 20 }}>Accept </Text>
         <Text style={{ fontSize: 20 }}>and </Text>

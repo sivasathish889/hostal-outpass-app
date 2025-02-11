@@ -24,7 +24,8 @@ import XIcon from "../../../assets/XIcon.png";
 import calendarIcon from "../../../assets/Calendar.png";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import axios from "axios";
-
+import Spinner from "react-native-loading-spinner-overlay";
+import Entypo from "@react-native-vector-icons/Entypo"
 let mainColor = "rgb(11,117,131)";
 let secondaryColor = "#F5BC00";
 
@@ -43,6 +44,7 @@ const HomeScreen = () => {
   const [inDateTime, setinDateTime] = useState(null);
   const [outDateTime, setoutDateTime] = useState(null);
   const [passId, setPassId] = useState(null);
+  const [spinnerVisible, setSpinnerVisible] = useState(false);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -76,9 +78,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     fetchData();
-  }, [dataRefresh,refreshing]);
-
-  
+  }, [dataRefresh, refreshing]);
 
   const fetchData = async () => {
     await AsyncStorage.getItem("user").then((userId) => {
@@ -86,8 +86,11 @@ const HomeScreen = () => {
       axios
         .get(`${env.CLIENT_URL}${env.studentPendingPasses}/${userId}`)
         .then((data) => {
+          setSpinnerVisible(true)
           setFetchPassData(data.data);
-          setRefreshing(false)
+          setRefreshing(false);
+          setSpinnerVisible(false)
+
         });
     });
   };
@@ -160,6 +163,11 @@ const HomeScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
+      <Spinner
+        visible={spinnerVisible}
+        textContent={"Loading..."}
+        textStyle={{ color: "#FFF" }}
+      />
       <FlatList
         data={fetchPassData.pass}
         renderItem={({ item }) => {
@@ -231,6 +239,7 @@ const HomeScreen = () => {
         onPress={() => setPassModelVisible(!passModelVisible)}
       >
         <Image source={plusIcon} />
+        <Entypo na/>
       </TouchableOpacity>
 
       {/* New Pass Model */}

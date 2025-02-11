@@ -21,6 +21,9 @@ export default env = {
     wardenLogin : "warden/login",
     wardenPassAccept : "warden/passAccept",
     wardenPassReject : "warden/passReject",
-    wardenPendingPass : "warden/pendingPasses"
+    wardenPendingPass : "warden/pendingPasses",
+    wardenAllAcceptPass : "warden/acceptPasses",
+    wardenAllRejectPass : "warden/rejectPasses",
+    wardenData : "warden/"
 
 }

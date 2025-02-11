@@ -4,14 +4,15 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import notifiIcon from "../../../assets/Notification.png";
 import homeIcon from "../../../assets/TabBar/HomeIcon.png";
-import Previous from "../../../assets/TabBar/Previous.png";
+import acceptPass from "../../../assets/TabBar/acceptPass.png";
+import closeIcon from "../../../assets/TabBar/close.png";
 import Settings from "../../../assets/TabBar/Settings.png";
 import HomeScreen from "./HomeRoute";
 import AcceptPass from "./AcceptPass";
 import RejectPass from "./RejectPass";
 import SettingScreen from "./SettingScreen";
+import IonIcons from "@expo/vector-icons/Ionicons";
 
 let mainColor = "rgb(11,117,131)";
 
@@ -26,7 +27,7 @@ const TabRoute = () => {
       <View style={styles.header}>
         <Text style={styles.headerText}>Welcome </Text>
         <TouchableOpacity>
-          <Image source={notifiIcon} style={styles.ImageStyle} />
+          <IonIcons name="notifications-outline" size={27} color="white"/>
         </TouchableOpacity>
       </View>
       <Tab.Navigator
@@ -77,11 +78,22 @@ const TabRoute = () => {
                         : { tintColor: "white" }
                     }
                   />
+                  
                   <Text
                     style={
                       action == "Home"
-                        ? { color: mainColor, fontSize: 10, width: 25 , textAlign : "center"}
-                        : { color: "white", fontSize: 10, width: 25 , textAlign : "center"}
+                        ? {
+                            color: mainColor,
+                            fontSize: 10,
+                            width: 25,
+                            textAlign: "center",
+                          }
+                        : {
+                            color: "white",
+                            fontSize: 10,
+                            width: 25,
+                            textAlign: "center",
+                          }
                     }
                   >
                     Home
@@ -126,7 +138,7 @@ const TabRoute = () => {
                   }
                 >
                   <Image
-                    source={Previous}
+                    source={acceptPass}
                     style={
                       action == "accept"
                         ? { tintColor: mainColor }
@@ -193,7 +205,7 @@ const TabRoute = () => {
                   }
                 >
                   <Image
-                    source={Previous}
+                    source={closeIcon}
                     style={
                       action == "reject"
                         ? { tintColor: mainColor }
@@ -203,8 +215,18 @@ const TabRoute = () => {
                   <Text
                     style={
                       action == "reject"
-                        ? { color: mainColor, fontSize: 10, width: 40 , textAlign:"center"}
-                        : { color: "white", fontSize: 10, width: 40 , textAlign:"center"}
+                        ? {
+                            color: mainColor,
+                            fontSize: 10,
+                            width: 40,
+                            textAlign: "center",
+                          }
+                        : {
+                            color: "white",
+                            fontSize: 10,
+                            width: 40,
+                            textAlign: "center",
+                          }
                     }
                   >
                     Reject
@@ -253,8 +275,8 @@ const TabRoute = () => {
                     source={Settings}
                     style={
                       action == "settings"
-                        ? { tintColor: mainColor,  }
-                        : { tintColor: "white",  }
+                        ? { tintColor: mainColor }
+                        : { tintColor: "white" }
                     }
                   />
                   <Text
@@ -265,14 +287,14 @@ const TabRoute = () => {
                             fontSize: 10,
                             width: 36,
                             marginStart: 4,
-                            textAlign : "center"
+                            textAlign: "center",
                           }
                         : {
                             color: "white",
                             fontSize: 10,
                             width: 40,
                             marginStart: 4,
-                            textAlign : "center"
+                            textAlign: "center",
                           }
                     }
                   >

@@ -2,64 +2,59 @@ const express = require("express");
 const wardenModel = require("../Model/Schema/wardenModel");
 const newRequestModel = require("../Model/Schema/newRequestModel");
 const routes = express.Router();
+const {
+  wardenLoginController,
+} = require("../Controller/wardenController/wardenLoginController");
+const {
+  passAcceptController,
+  passRejectConroller,
+  passPendingConroller,
+  allAcceptController,
+} = require("../Controller/wardenController/passController");
 
-routes.post("/login", async (req, res) => {
+routes.post("/login", wardenLoginController);
+
+routes.put("/passAccept/:id", passAcceptController);
+
+routes.put("/passReject/:id", passRejectConroller);
+
+routes.get("/pendingPasses", passPendingConroller);
+routes.get("/acceptPasses", (req,res)=>{
   try {
-    const { userName, password } = req.body;
-    await wardenModel
-      .find({ userName: userName, password: password })
-      .then((user) => {
-        if (user.length > 0) {
-          return res.json({ message: "Login Successfull", success: true });
-        } else {
-          return res.json({ message: "UnAuthorized", success: false });
-        }
-      });
-    res.json({ Message: "ok" });
+    newRequestModel.find({status:"2"}).sort({createdAt:"descending"})
+    .then((pass)=>{
+      return res
+              .json({message : "Accept Passes", pass, success : true})
+    })
   } catch (error) {
-    return res.json({ message: error.message, success: false });
+      return res
+              .json({message:error.message, success : false})
   }
 });
 
-routes.put("/passAccept/:id", async (req, res) => {
-  const passId = req.params.id;
+routes.get("/rejectPasses", (req,res)=>{
   try {
-    await newRequestModel
-      .findByIdAndUpdate(passId, { status: "2" }, { new: true })
-      .then(() => {
-        return res.json({ message: "Pass Accepted", success: true });
-      })
-      .catch((error) => {
-        return res.json({ message: error.message, success: false });
-      });
+    newRequestModel.find({status:"3"}).sort({createdAt:"descending"})
+    .then((pass)=>{
+      return res
+              .json({message : "Accept Passes", pass, success : true})
+    })
   } catch (error) {
-    return res.json({ message: error.message, success: false });
+      return res
+              .json({message:error.message, success : false})
   }
 });
 
-routes.put("/passReject/:id", async (req, res) => {
-  const passId = req.params.id;
-  try {
-    await newRequestModel
-      .findByIdAndUpdate(passId, { status: "3" }, { new: true })
-      .then(() => {
-        return res.json({ message: "Pass Rejected", success: true });
-      })
-      .catch((error) => {
-        return res.json({ message: error.message, success: false });
-      });
-  } catch (error) {
-    return res.json({ message: error.message, success: false });
-  }
-});
+routes.get("/:user",async(req,res)=>{
+    const userId = req.params.user;
+      try {
+        await wardenModel.find({_id:userId})
+        .then((data)=>{
+          return res.status(200).json({message : "Ok", data, success : true})
+        })
+      } catch (error) {
+        
+      }
 
-routes.get("/pendingPasses", async (req, res) => {
-  try {
-    await newRequestModel.find({ status: "1" }).then((data) => {
-      return res.json({ message: "fetching SuccessFull", data, success: true });
-    });
-  } catch (error) {
-    return res.json({ message: error.message, success: false });
-  }
-});
+})
 module.exports = routes;
